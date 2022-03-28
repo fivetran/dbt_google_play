@@ -1,0 +1,2 @@
+packages:
+  - local: ../dbt_google_play_source

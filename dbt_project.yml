@@ -1,0 +1,33 @@
+name: 'google_play'
+version: '0.1.0'
+config-version: 2
+require-dbt-version: [">=1.0.0", "<2.0.0"]
+
+vars:
+  google_play:
+    stats_installs_app_version: "{{ ref('stg_google_play__stats_installs_app_version') }}"
+    stats_crashes_app_version: "{{ ref('stg_google_play__stats_crashes_app_version') }}"
+    stats_ratings_app_version: "{{ ref('stg_google_play__stats_ratings_app_version') }}"
+    stats_installs_device: "{{ ref('stg_google_play__stats_installs_device') }}"
+    stats_ratings_device: "{{ ref('stg_google_play__stats_ratings_device') }}"
+    stats_installs_os_version: "{{ ref('stg_google_play__stats_installs_os_version') }}"
+    stats_ratings_os_version: "{{ ref('stg_google_play__stats_ratings_os_version') }}"
+    stats_crashes_os_version: "{{ ref('stg_google_play__stats_crashes_os_version') }}"
+    stats_installs_country: "{{ ref('stg_google_play__stats_installs_country') }}"
+    stats_ratings_country: "{{ ref('stg_google_play__stats_ratings_country') }}"
+    stats_store_performance_country: "{{ ref('stg_google_play__stats_store_performance_country') }}"
+    stats_store_performance_traffic_source: "{{ ref('stg_google_play__stats_store_performance_traffic_source') }}"
+    stats_installs_overview: "{{ ref('stg_google_play__stats_installs_overview') }}"
+    stats_crashes_overview: "{{ ref('stg_google_play__stats_crashes_overview') }}"
+    stats_ratings_overview: "{{ ref('stg_google_play__stats_ratings_overview') }}"
+    earnings: "{{ ref('stg_google_play__earnings') }}"
+    financial_stats_subscriptions_country: "{{ ref('stg_google_play__financial_stats_subscriptions_country') }}"
+
+    
+  google_play__using_earnings: true
+  google_play__using_subscriptions: true
+
+models:
+  google_play:
+    # +schema: google_play # TODO: uncomment before releasing
+    +materialized: table
