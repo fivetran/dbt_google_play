@@ -49,14 +49,6 @@ with installs as (
         and install_metrics.package_name = ratings.package_name
         and coalesce(install_metrics.device, 'null_device') = coalesce(ratings.device, 'null_device')
 
-), dedupe as (
-
-    select * 
-    from device_join
-
-    -- de-dupe after the full outer join
-    {{ dbt_utils.group_by(n=16) }}
-
 ), create_partitions as (
 
     select
@@ -70,7 +62,7 @@ with installs as (
         sum(case when total_device_installs is null 
                 then 0 else 1 end) over (partition by device, package_name order by date_day asc rows unbounded preceding) as total_devices_partition
 
-    from dedupe
+    from device_join
 
 ), fill_values as (
 
