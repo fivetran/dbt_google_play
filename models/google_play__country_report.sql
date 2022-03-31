@@ -117,9 +117,31 @@ with installs as (
 ), final as (
 
     select 
-        *,
-        round(total_store_acquisitions * 1.0 / total_store_visitors, 4) as rolling_store_conversion_rate,
-        total_device_installs - total_device_uninstalls as net_device_installs
+        date_day,
+        country,
+        package_name,
+        active_device_installs,
+        daily_device_installs,
+        daily_device_uninstalls,
+        daily_device_upgrades,
+        daily_user_installs,
+        daily_user_uninstalls,
+        install_events,
+        uninstall_events,
+        update_events,
+        daily_average_rating,
+        store_listing_conversion_rate,
+
+        rolling_total_average_rating, -- leave null if there are no ratings yet
+
+        coalesce(total_unique_user_installs, 0) as total_unique_user_installs,
+        coalesce(total_device_installs, 0) as total_device_installs,
+        coalesce(total_device_uninstalls, 0) as total_device_uninstalls,
+        coalesce(total_store_acquisitions, 0) as total_store_acquisitions,
+        coalesce(total_store_visitors, 0) as total_store_visitors,
+
+        round(total_store_acquisitions * 1.0 / nullif(total_store_visitors, 0), 4) as rolling_store_conversion_rate,
+        coalesce(total_device_installs, 0) - coalesce(total_device_uninstalls, 0) as net_device_installs
     
     from fill_values
 )

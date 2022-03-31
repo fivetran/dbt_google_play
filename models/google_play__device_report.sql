@@ -13,8 +13,8 @@ with installs as (
     select
         *,
         -- maybe this should be split into two columns and people can take the difference themsevles...
-        sum(daily_device_installs) over (partition by device, package_name rows between unbounded preceding and current row) - sum(daily_device_uninstalls) over (
-                partition by device, package_name rows between unbounded preceding and current row) as total_device_installs
+        sum(daily_device_installs) over (partition by device, package_name rows between unbounded preceding and current row) as total_device_installs,
+        sum(daily_device_uninstalls) over (partition by device, package_name rows between unbounded preceding and current row) as total_device_uninstalls
 
     from installs 
 
@@ -39,6 +39,7 @@ with installs as (
         -- gonna need to do some first_value stuff here...
         install_metrics.total_unique_user_installs,
         install_metrics.total_device_installs,
+        install_metrics.total_device_uninstalls,
 
         ratings.daily_average_rating,
         ratings.rolling_total_average_rating
@@ -53,6 +54,8 @@ with installs as (
 
     select
         *,
+
+        -- might wanna do a for loop over a list of metrics like the country report
         sum(case when rolling_total_average_rating is null 
                 then 0 else 1 end) over (partition by device, package_name order by date_day asc rows unbounded preceding) as rolling_avg_rating_partition,
 
@@ -60,7 +63,10 @@ with installs as (
                 then 0 else 1 end) over (partition by device, package_name order by date_day asc rows unbounded preceding) as total_users_partition,
 
         sum(case when total_device_installs is null 
-                then 0 else 1 end) over (partition by device, package_name order by date_day asc rows unbounded preceding) as total_devices_partition
+                then 0 else 1 end) over (partition by device, package_name order by date_day asc rows unbounded preceding) as total_device_installs_partition,
+
+        sum(case when total_device_uninstalls is null 
+                then 0 else 1 end) over (partition by device, package_name order by date_day asc rows unbounded preceding) as total_device_uninstalls_partition
 
     from device_join
 
@@ -88,11 +94,37 @@ with installs as (
             partition by total_users_partition, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_unique_user_installs,
 
         first_value( total_device_installs ) over (
-            partition by total_devices_partition, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs
+            partition by total_device_installs_partition, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+
+        first_value( total_device_uninstalls ) over (
+            partition by total_device_uninstalls_partition, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
 
     from create_partitions
 
+), final as (
+
+    select 
+        date_day,
+        device,
+        package_name,
+        active_device_installs,
+        daily_device_installs,
+        daily_device_uninstalls,
+        daily_device_upgrades,
+        daily_user_installs,
+        daily_user_uninstalls,
+        install_events,
+        uninstall_events,
+        update_events,
+        daily_average_rating,
+        rolling_total_average_rating,
+        coalesce(total_unique_user_installs, 0) as total_unique_user_installs,
+        coalesce(total_device_installs, 0) as total_device_installs,
+        coalesce(total_device_uninstalls, 0) as total_device_uninstalls,
+        coalesce(total_device_installs, 0) - coalesce(total_device_uninstalls, 0) as net_device_installs
+
+    from fill_values
 )
 
 select *
-from fill_values
+from final

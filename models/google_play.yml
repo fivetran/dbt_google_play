@@ -9,3 +9,10 @@ models:
             - package_name
             - date_day
             - device
+  - name: google_play__country_report
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - package_name
+            - date_day
+            - country
