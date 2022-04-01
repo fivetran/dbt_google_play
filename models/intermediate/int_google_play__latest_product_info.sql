@@ -6,7 +6,7 @@ with earnings as (
 ), transaction_recency as (
 
     select 
-        product_id,
+        package_name,
         product_title,
         sku_id,
         max(transaction_pt_timestamp) as last_transaction_at
@@ -25,7 +25,7 @@ with earnings as (
 ), latest_product_record as (
 
     select 
-        product_id as package_name, -- same thing
+        package_name,
         product_title,
         sku_id
 

@@ -26,7 +26,7 @@ with earnings as (
         coalesce(earnings.date_day, subscriptions.date_day) as date_day,
         coalesce(earnings.country, subscriptions.country) as country,
         coalesce(earnings.package_name, subscriptions.package_name) as package_name,
-        coalesce(earnings.sku_id, subscriptions.package_name) as sku_id,
+        coalesce(earnings.sku_id, subscriptions.product_id) as sku_id,
         earnings.merchant_currency, -- this will just be null if there aren't transactions on a given day
 
         {% for t in earning_transaction_metrics -%}
@@ -35,8 +35,8 @@ with earnings as (
             {% endif %}
         {%- endfor -%}
 
-        coalesce(subscriptions.daily_new_subscriptions) as daily_new_subscriptions,
-        coalesce(subscriptions.daily_cancelled_subscriptions) as daily_cancelled_subscriptions,
+        coalesce(subscriptions.daily_new_subscriptions, 0) as daily_new_subscriptions,
+        coalesce(subscriptions.daily_cancelled_subscriptions, 0) as daily_cancelled_subscriptions,
         subscriptions.count_active_subscriptions -- do some first value stuff
 
     from earnings
@@ -45,6 +45,7 @@ with earnings as (
         on earnings.date_day = subscriptions.date_day
         and earnings.package_name = subscriptions.package_name
         and coalesce(earnings.country, 'null_country') = coalesce(subscriptions.country, 'null_country')
+        and earnings.sku_id = subscriptions.product_id
 
 ), create_partitions as (
 
