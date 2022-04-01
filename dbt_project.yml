@@ -22,7 +22,7 @@ vars:
     stats_ratings_overview: "{{ ref('stg_google_play__stats_ratings_overview') }}"
     earnings: "{{ ref('stg_google_play__earnings') }}"
     financial_stats_subscriptions_country: "{{ ref('stg_google_play__financial_stats_subscriptions_country') }}"
-
+    
     
   google_play__using_earnings: true
   google_play__using_subscriptions: true
