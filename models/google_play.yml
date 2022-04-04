@@ -1,7 +1,6 @@
 version: 2
 
 models:
-
   - name: google_play__device_report
     tests:
       - dbt_utils.unique_combination_of_columns:
