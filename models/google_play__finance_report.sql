@@ -1,23 +1,27 @@
-{{ config(enabled=var('google_play__using_earnings', True)) }} -- maybe this should be disabled by default? 
+{{ config(enabled=var('google_play__using_earnings', False)) }} -- maybe this should be disabled by default? 
 
 with earnings as (
 
     select *
     from {{ ref('int_google_play__earnings') }}
+), 
 
-), product_info as (
+product_info as (
 
     select *
     from {{ ref('int_google_play__latest_product_info') }}
 
 -- there's honestly quite a bit in here since we only need to do backfilling stuff if there is indeed a full outer join
-{% if var('google_play__using_subscriptions', True) -%}
-), subscriptions as (
+{% if var('google_play__using_subscriptions', False) -%}
+), 
+
+subscriptions as (
 
     select *
     from {{ var('financial_stats_subscriptions_country') }}
+), 
 
-), daily_join as (
+daily_join as (
 
 -- these are dynamically set 
 {% set earning_transaction_metrics = adapter.get_columns_in_relation(ref('int_google_play__earnings')) %}
@@ -40,23 +44,23 @@ with earnings as (
         subscriptions.count_active_subscriptions -- do some first value stuff
 
     from earnings
-
     full outer join subscriptions
         on earnings.date_day = subscriptions.date_day
         and earnings.package_name = subscriptions.package_name
         and coalesce(earnings.country, 'null_country') = coalesce(subscriptions.country, 'null_country')
         and earnings.sku_id = subscriptions.product_id
+), 
 
-), create_partitions as (
+create_partitions as (
 
     select 
         *,
         sum(case when count_active_subscriptions is null 
                 then 0 else 1 end) over (partition by country, sku_id order by date_day asc rows unbounded preceding) as count_active_subscriptions_partition
-        
     from daily_join
+), 
 
-), fill_values as (
+fill_values as (
 
     select 
         -- we can include these in earning_transaction_metrics but wanna keep them in this column position
@@ -76,10 +80,10 @@ with earnings as (
 
         first_value( count_active_subscriptions ) over (
             partition by count_active_subscriptions_partition, country, sku_id order by date_day asc rows between unbounded preceding and current row) as count_active_subscriptions
-
     from create_partitions
+), 
 
-), final_values as (
+final_values as (
 
     select 
         date_day,
@@ -95,18 +99,17 @@ with earnings as (
         daily_new_subscriptions,
         daily_cancelled_subscriptions,
         coalesce(count_active_subscriptions, 0) as count_active_subscriptions
-
     from fill_values
-
 {%- endif %}
-), add_product_info as (
+
+), 
+
+add_product_info as (
 
     select 
         base.*,
         product_info.product_title
-
-    from {{ 'final_values' if var('google_play__using_subscriptions', True) else 'earnings' }} as base
-
+    from {{ 'final_values' if var('google_play__using_subscriptions', False) else 'earnings' }} as base
     left join product_info 
         on base.package_name = product_info.package_name
         and base.sku_id = product_info.sku_id

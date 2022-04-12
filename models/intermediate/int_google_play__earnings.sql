@@ -1,11 +1,13 @@
-{{ config(enabled=var('google_play__using_earnings', True)) }} -- maybe this should be disabled by default? 
+{{ config(enabled=var('google_play__using_earnings', False)) }} -- maybe this should be disabled by default? 
 
 with earnings as (
 
     select *
     from {{ var('earnings') }}
 
-), daily_country_metrics as (
+), 
+
+daily_country_metrics as (
 
 -- let's pivot out revenue metrics associated wit each type of transaction type
 {% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="coalesce(transaction_type, 'other')") %}
@@ -20,10 +22,8 @@ with earnings as (
         , sum( case when lower(transaction_type) = '{{ t | lower }}' then amount_merchant_currency else 0 end ) as {{ t | replace(' ', '_') | lower }}_amount
         , sum( case when lower(transaction_type) = '{{ t | lower }}' then 1 else 0 end ) as {{ t | replace(' ', '_') | lower }}_events
         {% endfor %}
-
     from earnings
-
-    group by 1,2,3,4,5
+    {{ dbt_utils.group_by(n=5) }}
 )
 
 select *
