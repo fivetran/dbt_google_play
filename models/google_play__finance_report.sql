@@ -23,10 +23,11 @@ subscriptions as (
 
 daily_join as (
 
--- these are dynamically set 
+-- these are dynamically set. perhaps we should extract into a variable in case people's tables get to wide?
 {% set earning_transaction_metrics = adapter.get_columns_in_relation(ref('int_google_play__earnings')) %}
 
     select
+        -- these columns are the grain of this model (day + country + package_name + product (sku_id))
         coalesce(earnings.date_day, subscriptions.date_day) as date_day,
         coalesce(earnings.country, subscriptions.country) as country,
         coalesce(earnings.package_name, subscriptions.package_name) as package_name,
@@ -41,16 +42,19 @@ daily_join as (
 
         coalesce(subscriptions.daily_new_subscriptions, 0) as daily_new_subscriptions,
         coalesce(subscriptions.daily_cancelled_subscriptions, 0) as daily_cancelled_subscriptions,
-        subscriptions.count_active_subscriptions -- do some first value stuff
 
+        -- this is a rolling metric, so we'll use window functions to backfill instead of coalescing
+        subscriptions.count_active_subscriptions
     from earnings
     full outer join subscriptions
         on earnings.date_day = subscriptions.date_day
         and earnings.package_name = subscriptions.package_name
-        and coalesce(earnings.country, 'null_country') = coalesce(subscriptions.country, 'null_country')
+        and coalesce(earnings.country, 'null_country') = coalesce(subscriptions.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
         and earnings.sku_id = subscriptions.product_id
 ), 
 
+-- to backfill in days with NULL values for rolling metrics, we'll create a partition to batch them together with records that have non-null values
+-- we can't just use last_value(ignore nulls) because of postgres :/
 create_partitions as (
 
     select 
@@ -78,6 +82,7 @@ fill_values as (
         daily_new_subscriptions,
         daily_cancelled_subscriptions,
 
+        -- now we'll take the non-null value for each partitioned batch and propagate it across the rows included in the batch
         first_value( count_active_subscriptions ) over (
             partition by count_active_subscriptions_partition, country, sku_id order by date_day asc rows between unbounded preceding and current row) as count_active_subscriptions
     from create_partitions
@@ -98,6 +103,8 @@ final_values as (
         {%- endfor -%}
         daily_new_subscriptions,
         daily_cancelled_subscriptions,
+        
+        -- the first day will have NULL values, let's make it 0
         coalesce(count_active_subscriptions, 0) as count_active_subscriptions
     from fill_values
 {%- endif %}
