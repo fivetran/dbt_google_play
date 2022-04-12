@@ -8,3 +8,17 @@ models:
             - package_name
             - date_day
             - device
+  - name: google_play__country_report
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - package_name
+            - date_day
+            - country
+  - name: google_play__finance_report
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - sku_id
+            - country
+            - date_day
