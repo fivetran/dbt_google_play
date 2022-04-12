@@ -1,4 +1,4 @@
-{{ config(enabled=var('google_play__using_earnings', False)) }} -- maybe this should be disabled by default? 
+{{ config(enabled=var('google_play__using_earnings', False)) }} 
 
 with earnings as (
 

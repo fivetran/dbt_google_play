@@ -1,3 +1,5 @@
+{{ config(enabled=var('google_play__using_earnings', False)) }} 
+
 with earnings as (
 
     select *
@@ -5,6 +7,7 @@ with earnings as (
 
 ), 
 
+-- figure out when the latest transaction involving this product was to find the latest product title used for it
 transaction_recency as (
 
     select 
