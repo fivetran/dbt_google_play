@@ -1,27 +1,27 @@
 with installs as (
 
     select *
-    from {{ var('stats_installs_app_version') }}
+    from {{ var('stats_installs_os_version') }}
 ), 
 
 ratings as (
 
     select *
-    from {{ var('stats_ratings_app_version') }}
+    from {{ var('stats_ratings_os_version') }}
 ), 
 
 crashes as (
 
     select *
-    from {{ var('stats_crashes_app_version') }}
+    from {{ var('stats_crashes_os_version') }}
 ), 
 
 install_metrics as (
 
     select
         *,
-        sum(daily_device_installs) over (partition by app_version_code, package_name rows between unbounded preceding and current row) as total_device_installs,
-        sum(daily_device_uninstalls) over (partition by app_version_code, package_name rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(daily_device_installs) over (partition by android_os_version, package_name rows between unbounded preceding and current row) as total_device_installs,
+        sum(daily_device_uninstalls) over (partition by android_os_version, package_name rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -30,7 +30,7 @@ app_version_join as (
     select 
         -- these 3 columns are the grain of this model
         coalesce(install_metrics.date_day, ratings.date_day, crashes.date_day) as date_day,
-        coalesce(install_metrics.app_version_code, ratings.app_version_code, crashes.app_version_code) as app_version_code,
+        coalesce(install_metrics.android_os_version, ratings.android_os_version, crashes.android_os_version) as android_os_version,
         coalesce(install_metrics.package_name, ratings.package_name, crashes.package_name) as package_name,
 
         -- metrics based on unique devices + users
@@ -58,12 +58,11 @@ app_version_join as (
     full outer join ratings
         on install_metrics.date_day = ratings.date_day
         and install_metrics.package_name = ratings.package_name
-        -- choosing -5 as no app version code should be negative...
-        and coalesce(install_metrics.app_version_code, -5) = coalesce(ratings.app_version_code, -5) -- this really doesn't happen IRL but let's be safe
+        and coalesce(install_metrics.android_os_version, 'null_os_version') = coalesce(ratings.android_os_version, 'null_os_version')
     full outer join crashes
         on install_metrics.date_day = crashes.date_day
         and install_metrics.package_name = crashes.package_name
-        and coalesce(install_metrics.app_version_code, -5) = coalesce(crashes.app_version_code, -5)
+        and coalesce(install_metrics.android_os_version, 'null_os_version') = coalesce(crashes.android_os_version, 'null_os_version')
 ), 
 
 -- to backfill in days with NULL values for rolling metrics, we'll create partitions to batch them together with records that have non-null values
@@ -77,7 +76,7 @@ create_partitions as (
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
-                then 0 else 1 end) over (partition by app_version_code, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
+                then 0 else 1 end) over (partition by android_os_version, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
     {%- endfor %}
     from app_version_join
 ), 
@@ -87,7 +86,7 @@ fill_values as (
 
     select 
         date_day,
-        app_version_code,
+        android_os_version,
         package_name,
         active_device_installs,
         daily_device_installs,
@@ -105,7 +104,7 @@ fill_values as (
         {% for metric in rolling_metrics -%}
 
         , first_value( {{ metric }} ) over (
-            partition by {{ metric | lower }}_partition, app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
+            partition by {{ metric | lower }}_partition, android_os_version, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
 
         {%- endfor %}
     from create_partitions
@@ -115,7 +114,7 @@ final as (
 
     select 
         date_day,
-        app_version_code,
+        android_os_version,
         package_name,
         active_device_installs,
         daily_device_installs,

@@ -23,3 +23,10 @@ models:
             - sku_id
             - country
             - date_day
+  - name: google_play__app_version_report
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - package_name
+            - date_day
+            - app_version_code
