@@ -67,8 +67,8 @@ overview_join as (
         coalesce(install_metrics.daily_device_upgrades, 0) as daily_device_upgrades,
         coalesce(install_metrics.daily_user_installs, 0) as daily_user_installs,
         coalesce(install_metrics.daily_user_uninstalls, 0) as daily_user_uninstalls,
-        coalesce(store_performance_metrics.store_listing_acquisitions) as store_listing_acquisitions,
-        coalesce(store_performance_metrics.store_listing_visitors) as store_listing_visitors,
+        coalesce(store_performance_metrics.store_listing_acquisitions, 0) as store_listing_acquisitions,
+        coalesce(store_performance_metrics.store_listing_visitors, 0) as store_listing_visitors,
         store_performance_metrics.store_listing_conversion_rate, -- not coalescing if there aren't any visitors 
 
         -- metrics based on events. a user or device can have multiple installs in one day
