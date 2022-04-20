@@ -21,7 +21,7 @@ subscriptions as (
     from {{ var('financial_stats_subscriptions_country') }}
 ), 
 
-daily_join as (
+join as (
 
 -- these are dynamically set. perhaps we should extract into a variable in case people's tables get to wide?
 {% set earning_transaction_metrics = adapter.get_columns_in_relation(ref('int_google_play__earnings')) %}
@@ -40,8 +40,8 @@ daily_join as (
             {% endif %}
         {%- endfor -%}
 
-        coalesce(subscriptions.daily_new_subscriptions, 0) as daily_new_subscriptions,
-        coalesce(subscriptions.daily_cancelled_subscriptions, 0) as daily_cancelled_subscriptions,
+        coalesce(subscriptions.new_subscriptions, 0) as new_subscriptions,
+        coalesce(subscriptions.cancelled_subscriptions, 0) as cancelled_subscriptions,
 
         -- this is a rolling metric, so we'll use window functions to backfill instead of coalescing
         subscriptions.count_active_subscriptions
@@ -49,6 +49,7 @@ daily_join as (
     full outer join subscriptions
         on earnings.date_day = subscriptions.date_day
         and earnings.package_name = subscriptions.package_name
+        -- coalesce null countries otherwise they'll cause fanout with the full outer join
         and coalesce(earnings.country, 'null_country') = coalesce(subscriptions.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
         and earnings.sku_id = subscriptions.product_id
 ), 
@@ -61,7 +62,7 @@ create_partitions as (
         *,
         sum(case when count_active_subscriptions is null 
                 then 0 else 1 end) over (partition by country, sku_id order by date_day asc rows unbounded preceding) as count_active_subscriptions_partition
-    from daily_join
+    from join
 ), 
 
 fill_values as (
@@ -79,8 +80,8 @@ fill_values as (
             {% endif %}
         {%- endfor -%}
 
-        daily_new_subscriptions,
-        daily_cancelled_subscriptions,
+        new_subscriptions,
+        cancelled_subscriptions,
 
         -- now we'll take the non-null value for each partitioned batch and propagate it across the rows included in the batch
         first_value( count_active_subscriptions ) over (
@@ -101,8 +102,8 @@ final_values as (
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
-        daily_new_subscriptions,
-        daily_cancelled_subscriptions,
+        new_subscriptions,
+        cancelled_subscriptions,
         
         -- the first day will have NULL values, let's make it 0
         coalesce(count_active_subscriptions, 0) as count_active_subscriptions

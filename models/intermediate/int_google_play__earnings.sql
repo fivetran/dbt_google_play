@@ -14,7 +14,7 @@ daily_country_metrics as (
 
     select 
         transaction_date as date_day,
-        buyer_country as country, -- mm should we include states here as well? we'd have to roll up to country to join with subscriptions
+        buyer_country as country, -- rolling up past states/territories
         sku_id,
         package_name, -- this is the same as package_name
         merchant_currency -- should be the same across the whole table....idk does this need to be included?? it would be wack to sum up different currencies if they changed

@@ -14,8 +14,8 @@ install_metrics as (
 
     select
         *,
-        sum(daily_device_installs) over (partition by device, package_name rows between unbounded preceding and current row) as total_device_installs,
-        sum(daily_device_uninstalls) over (partition by device, package_name rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by device, package_name rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by device, package_name rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -28,28 +28,29 @@ device_join as (
         coalesce(install_metrics.package_name, ratings.package_name) as package_name,
 
         -- metrics based on unique devices + users
-        coalesce(install_metrics.active_device_installs, 0) as active_device_installs,
-        coalesce(install_metrics.daily_device_installs, 0) as daily_device_installs,
-        coalesce(install_metrics.daily_device_uninstalls, 0) as daily_device_uninstalls,
-        coalesce(install_metrics.daily_device_upgrades, 0) as daily_device_upgrades,
-        coalesce(install_metrics.daily_user_installs, 0) as daily_user_installs,
-        coalesce(install_metrics.daily_user_uninstalls, 0) as daily_user_uninstalls,
+        coalesce(install_metrics.active_devices_last_30_days, 0) as active_devices_last_30_days,
+        coalesce(install_metrics.device_installs, 0) as device_installs,
+        coalesce(install_metrics.device_uninstalls, 0) as device_uninstalls,
+        coalesce(install_metrics.device_upgrades, 0) as device_upgrades,
+        coalesce(install_metrics.user_installs, 0) as user_installs,
+        coalesce(install_metrics.user_uninstalls, 0) as user_uninstalls,
         
         -- metrics based on events. a user or device can have multiple installs in one day
         coalesce(install_metrics.install_events, 0) as install_events,
         coalesce(install_metrics.uninstall_events, 0) as uninstall_events,
         coalesce(install_metrics.update_events, 0) as update_events,    
 
-        -- all of the following fields (except daily_average_rating) are rolling metrics that we'll use window functions to backfill instead of coalescing
+        -- all of the following fields (except average_rating) are rolling metrics that we'll use window functions to backfill instead of coalescing
         install_metrics.total_unique_user_installs,
         install_metrics.total_device_installs,
         install_metrics.total_device_uninstalls,
-        ratings.daily_average_rating, -- this one actually isn't rolling but we won't coalesce days with no reviews to 0 rating
+        ratings.average_rating, -- this one actually isn't rolling but we won't coalesce days with no reviews to 0 rating
         ratings.rolling_total_average_rating
     from install_metrics
     full outer join ratings
         on install_metrics.date_day = ratings.date_day
         and install_metrics.package_name = ratings.package_name
+        -- coalesce null device types otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.device, 'null_device') = coalesce(ratings.device, 'null_device') -- in the source package we aggregate all null device-type records together into one batch per day
 ), 
 
@@ -76,16 +77,16 @@ fill_values as (
         date_day,
         device,
         package_name,
-        active_device_installs,
-        daily_device_installs,
-        daily_device_uninstalls,
-        daily_device_upgrades,
-        daily_user_installs,
-        daily_user_uninstalls,
+        active_devices_last_30_days,
+        device_installs,
+        device_uninstalls,
+        device_upgrades,
+        user_installs,
+        user_uninstalls,
         install_events,
         uninstall_events,
         update_events,
-        daily_average_rating
+        average_rating
 
         {% for metric in rolling_metrics -%}
 
@@ -102,16 +103,16 @@ final as (
         date_day,
         device,
         package_name,
-        active_device_installs,
-        daily_device_installs,
-        daily_device_uninstalls,
-        daily_device_upgrades,
-        daily_user_installs,
-        daily_user_uninstalls,
+        device_installs,
+        device_uninstalls,
+        device_upgrades,
+        user_installs,
+        user_uninstalls,
         install_events,
         uninstall_events,
         update_events,
-        daily_average_rating,
+        active_devices_last_30_days,
+        average_rating,
 
         -- leave null if there are no ratings yet
         rolling_total_average_rating,
