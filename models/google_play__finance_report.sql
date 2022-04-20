@@ -21,7 +21,7 @@ subscriptions as (
     from {{ var('financial_stats_subscriptions_country') }}
 ), 
 
-join as (
+daily_join as (
 
 -- these are dynamically set. perhaps we should extract into a variable in case people's tables get to wide?
 {% set earning_transaction_metrics = adapter.get_columns_in_relation(ref('int_google_play__earnings')) %}
@@ -44,7 +44,7 @@ join as (
         coalesce(subscriptions.cancelled_subscriptions, 0) as cancelled_subscriptions,
 
         -- this is a rolling metric, so we'll use window functions to backfill instead of coalescing
-        subscriptions.count_active_subscriptions
+        subscriptions.total_active_subscriptions
     from earnings
     full outer join subscriptions
         on earnings.date_day = subscriptions.date_day
@@ -60,9 +60,9 @@ create_partitions as (
 
     select 
         *,
-        sum(case when count_active_subscriptions is null 
-                then 0 else 1 end) over (partition by country, sku_id order by date_day asc rows unbounded preceding) as count_active_subscriptions_partition
-    from join
+        sum(case when total_active_subscriptions is null 
+                then 0 else 1 end) over (partition by country, sku_id order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
+    from daily_join
 ), 
 
 fill_values as (
@@ -84,8 +84,8 @@ fill_values as (
         cancelled_subscriptions,
 
         -- now we'll take the non-null value for each partitioned batch and propagate it across the rows included in the batch
-        first_value( count_active_subscriptions ) over (
-            partition by count_active_subscriptions_partition, country, sku_id order by date_day asc rows between unbounded preceding and current row) as count_active_subscriptions
+        first_value( total_active_subscriptions ) over (
+            partition by total_active_subscriptions_partition, country, sku_id order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
     from create_partitions
 ), 
 
@@ -106,7 +106,7 @@ final_values as (
         cancelled_subscriptions,
         
         -- the first day will have NULL values, let's make it 0
-        coalesce(count_active_subscriptions, 0) as count_active_subscriptions
+        coalesce(total_active_subscriptions, 0) as total_active_subscriptions
     from fill_values
 {%- endif %}
 
