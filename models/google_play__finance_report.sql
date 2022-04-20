@@ -40,15 +40,16 @@ daily_join as (
             {% endif %}
         {%- endfor -%}
 
-        coalesce(subscriptions.daily_new_subscriptions, 0) as daily_new_subscriptions,
-        coalesce(subscriptions.daily_cancelled_subscriptions, 0) as daily_cancelled_subscriptions,
+        coalesce(subscriptions.new_subscriptions, 0) as new_subscriptions,
+        coalesce(subscriptions.cancelled_subscriptions, 0) as cancelled_subscriptions,
 
         -- this is a rolling metric, so we'll use window functions to backfill instead of coalescing
-        subscriptions.count_active_subscriptions
+        subscriptions.total_active_subscriptions
     from earnings
     full outer join subscriptions
         on earnings.date_day = subscriptions.date_day
         and earnings.package_name = subscriptions.package_name
+        -- coalesce null countries otherwise they'll cause fanout with the full outer join
         and coalesce(earnings.country, 'null_country') = coalesce(subscriptions.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
         and earnings.sku_id = subscriptions.product_id
 ), 
@@ -59,8 +60,8 @@ create_partitions as (
 
     select 
         *,
-        sum(case when count_active_subscriptions is null 
-                then 0 else 1 end) over (partition by country, sku_id order by date_day asc rows unbounded preceding) as count_active_subscriptions_partition
+        sum(case when total_active_subscriptions is null 
+                then 0 else 1 end) over (partition by country, sku_id order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
     from daily_join
 ), 
 
@@ -79,12 +80,12 @@ fill_values as (
             {% endif %}
         {%- endfor -%}
 
-        daily_new_subscriptions,
-        daily_cancelled_subscriptions,
+        new_subscriptions,
+        cancelled_subscriptions,
 
         -- now we'll take the non-null value for each partitioned batch and propagate it across the rows included in the batch
-        first_value( count_active_subscriptions ) over (
-            partition by count_active_subscriptions_partition, country, sku_id order by date_day asc rows between unbounded preceding and current row) as count_active_subscriptions
+        first_value( total_active_subscriptions ) over (
+            partition by total_active_subscriptions_partition, country, sku_id order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
     from create_partitions
 ), 
 
@@ -101,11 +102,11 @@ final_values as (
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
-        daily_new_subscriptions,
-        daily_cancelled_subscriptions,
+        new_subscriptions,
+        cancelled_subscriptions,
         
         -- the first day will have NULL values, let's make it 0
-        coalesce(count_active_subscriptions, 0) as count_active_subscriptions
+        coalesce(total_active_subscriptions, 0) as total_active_subscriptions
     from fill_values
 {%- endif %}
 

@@ -22,3 +22,23 @@ models:
             - sku_id
             - country
             - date_day
+  - name: google_play__app_version_report
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - package_name
+            - date_day
+            - app_version_code
+  - name: google_play__os_version_report
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - package_name
+            - date_day
+            - android_os_version
+  - name: google_play__overview_report
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - package_name
+            - date_day
