@@ -59,7 +59,6 @@ country_join as (
         coalesce(install_metrics.update_events, 0) as update_events,    
 
         -- all of the following fields (except %'s') are rolling metrics that we'll use window functions to backfill instead of coalescing
-        install_metrics.total_unique_user_installs,
         install_metrics.total_device_installs,
         install_metrics.total_device_uninstalls,
         ratings.average_rating, -- this one actually isn't rolling but we won't coalesce days with no reviews to 0 rating
@@ -86,7 +85,7 @@ create_partitions as (
     select
         *
 
-    {%- set rolling_metrics = ['rolling_total_average_rating', 'total_unique_user_installs', 'total_device_installs', 'total_device_uninstalls', 'total_store_acquisitions', 'total_store_visitors'] -%}
+    {%- set rolling_metrics = ['rolling_total_average_rating', 'total_device_installs', 'total_device_uninstalls', 'total_store_acquisitions', 'total_store_visitors'] -%}
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
@@ -111,9 +110,9 @@ fill_values as (
         install_events,
         uninstall_events,
         update_events,
-        store_listing_acquisitions, -- should we prepend with ?
+        store_listing_acquisitions, 
         store_listing_visitors,
-        store_listing_conversion_rate, -- daily
+        store_listing_conversion_rate,
         average_rating
 
         {% for metric in rolling_metrics -%}
@@ -149,7 +148,6 @@ final as (
         rolling_total_average_rating, 
 
         -- the first day will have NULL values, let's make it 0
-        coalesce(total_unique_user_installs, 0) as total_unique_user_installs,
         coalesce(total_device_installs, 0) as total_device_installs,
         coalesce(total_device_uninstalls, 0) as total_device_uninstalls,
         coalesce(total_store_acquisitions, 0) as total_store_acquisitions,
