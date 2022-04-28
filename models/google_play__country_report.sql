@@ -20,8 +20,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by country, package_name rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by country, package_name rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -29,8 +29,8 @@ store_performance_metrics as (
 
     select
         *,
-        sum(store_listing_acquisitions) over (partition by country_region, package_name rows between unbounded preceding and current row) as total_store_acquisitions,
-        sum(store_listing_visitors) over (partition by country_region, package_name rows between unbounded preceding and current row) as total_store_visitors
+        sum(store_listing_acquisitions) over (partition by country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_acquisitions,
+        sum(store_listing_visitors) over (partition by country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_visitors
     from store_performance
 ), 
 

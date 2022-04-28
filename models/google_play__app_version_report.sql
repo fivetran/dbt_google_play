@@ -20,8 +20,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by app_version_code, package_name rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by app_version_code, package_name rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
