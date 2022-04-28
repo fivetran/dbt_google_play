@@ -15,17 +15,13 @@ vars:
     stats_crashes_os_version: "{{ ref('stg_google_play__stats_crashes_os_version') }}"
     stats_installs_country: "{{ ref('stg_google_play__stats_installs_country') }}"
     stats_ratings_country: "{{ ref('stg_google_play__stats_ratings_country') }}"
-    stats_store_performance_country: "{{ ref('stg_google_play__stats_store_performance_country') }}"
-    stats_store_performance_traffic_source: "{{ ref('stg_google_play__stats_store_performance_traffic_source') }}"
+    stats_store_performance_country: "{{ ref('stg_google_play__store_performance_country') }}"
+    stats_store_performance_traffic_source: "{{ ref('stg_google_play__store_performance_source') }}"
     stats_installs_overview: "{{ ref('stg_google_play__stats_installs_overview') }}"
     stats_crashes_overview: "{{ ref('stg_google_play__stats_crashes_overview') }}"
     stats_ratings_overview: "{{ ref('stg_google_play__stats_ratings_overview') }}"
     earnings: "{{ ref('stg_google_play__earnings') }}"
-    financial_stats_subscriptions_country: "{{ ref('stg_google_play__financial_stats_subscriptions_country') }}"
-    
-    
-  google_play__using_earnings: true
-  google_play__using_subscriptions: true
+    financial_stats_subscriptions_country: "{{ ref('stg_google_play__subscriptions_country') }}"
 
 models:
   google_play:
