@@ -18,7 +18,7 @@ calc_net_amounts as (
 daily_country_metrics as (
 
 -- let's pivot out revenue metrics associated wit each type of transaction type
-{% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="coalesce(transaction_type, 'other')") %}
+{% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="transaction_type") %}
 
     select 
         transaction_date as date_day,
