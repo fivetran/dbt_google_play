@@ -1,2 +1,5 @@
 packages:
-  - local: ../dbt_google_play_source
+  # - local: ../dbt_google_play_source
+  - git: https://github.com/fivetran/dbt_google_play_source.git
+    revision: initial-build
+    warn-unpinned: false
