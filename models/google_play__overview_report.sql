@@ -153,7 +153,7 @@ final as (
         coalesce(total_store_visitors, 0) as total_store_visitors,
 
         -- calculate percentage and difference rolling metrics
-        round( cast(total_store_acquisitions as {{ dbt_utils.type_float() }}) / nullif(total_store_visitors, 0), 4) as rolling_store_conversion_rate,
+        round( cast(total_store_acquisitions as {{ dbt_utils.type_numeric() }}) / nullif(total_store_visitors, 0), 4) as rolling_store_conversion_rate,
         coalesce(total_device_installs, 0) - coalesce(total_device_uninstalls, 0) as net_device_installs
     from fill_values
 )
