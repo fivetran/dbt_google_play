@@ -20,8 +20,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by country, package_name rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by country, package_name rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -29,8 +29,8 @@ store_performance_metrics as (
 
     select
         *,
-        sum(store_listing_acquisitions) over (partition by country_region, package_name rows between unbounded preceding and current row) as total_store_acquisitions,
-        sum(store_listing_visitors) over (partition by country_region, package_name rows between unbounded preceding and current row) as total_store_visitors
+        sum(store_listing_acquisitions) over (partition by country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_acquisitions,
+        sum(store_listing_visitors) over (partition by country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_visitors
     from store_performance
 ), 
 
@@ -59,7 +59,6 @@ country_join as (
         coalesce(install_metrics.update_events, 0) as update_events,    
 
         -- all of the following fields (except %'s') are rolling metrics that we'll use window functions to backfill instead of coalescing
-        install_metrics.total_unique_user_installs,
         install_metrics.total_device_installs,
         install_metrics.total_device_uninstalls,
         ratings.average_rating, -- this one actually isn't rolling but we won't coalesce days with no reviews to 0 rating
@@ -86,7 +85,7 @@ create_partitions as (
     select
         *
 
-    {%- set rolling_metrics = ['rolling_total_average_rating', 'total_unique_user_installs', 'total_device_installs', 'total_device_uninstalls', 'total_store_acquisitions', 'total_store_visitors'] -%}
+    {%- set rolling_metrics = ['rolling_total_average_rating', 'total_device_installs', 'total_device_uninstalls', 'total_store_acquisitions', 'total_store_visitors'] -%}
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
@@ -111,9 +110,9 @@ fill_values as (
         install_events,
         uninstall_events,
         update_events,
-        store_listing_acquisitions, -- should we prepend with ?
+        store_listing_acquisitions, 
         store_listing_visitors,
-        store_listing_conversion_rate, -- daily
+        store_listing_conversion_rate,
         average_rating
 
         {% for metric in rolling_metrics -%}
@@ -149,14 +148,13 @@ final as (
         rolling_total_average_rating, 
 
         -- the first day will have NULL values, let's make it 0
-        coalesce(total_unique_user_installs, 0) as total_unique_user_installs,
         coalesce(total_device_installs, 0) as total_device_installs,
         coalesce(total_device_uninstalls, 0) as total_device_uninstalls,
         coalesce(total_store_acquisitions, 0) as total_store_acquisitions,
         coalesce(total_store_visitors, 0) as total_store_visitors,
 
         -- calculate percentage and difference rolling metrics
-        round(total_store_acquisitions * 1.0 / nullif(total_store_visitors, 0), 4) as rolling_store_conversion_rate,
+        round(cast(total_store_acquisitions as {{ dbt_utils.type_numeric() }}) / nullif(total_store_visitors, 0), 4) as rolling_store_conversion_rate,
         coalesce(total_device_installs, 0) - coalesce(total_device_uninstalls, 0) as net_device_installs
     from fill_values
 )

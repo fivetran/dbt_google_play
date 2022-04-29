@@ -20,8 +20,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by app_version_code, package_name rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by app_version_code, package_name rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -49,7 +49,6 @@ app_version_join as (
         coalesce(install_metrics.update_events, 0) as update_events,    
 
         -- all of the following fields (except average_rating) are rolling metrics that we'll use window functions to backfill instead of coalescing
-        install_metrics.total_unique_user_installs,
         install_metrics.total_device_installs,
         install_metrics.total_device_uninstalls,
         ratings.average_rating, -- this one actually isn't rolling but we won't coalesce days with no reviews to 0 rating
@@ -73,7 +72,7 @@ create_partitions as (
     select
         *
 
-    {%- set rolling_metrics = ['rolling_total_average_rating', 'total_unique_user_installs', 'total_device_installs', 'total_device_uninstalls'] -%}
+    {%- set rolling_metrics = ['rolling_total_average_rating', 'total_device_installs', 'total_device_uninstalls'] -%}
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
@@ -134,7 +133,6 @@ final as (
         rolling_total_average_rating,
 
         -- the first day will have NULL values, let's make it 0
-        coalesce(total_unique_user_installs, 0) as total_unique_user_installs,
         coalesce(total_device_installs, 0) as total_device_installs,
         coalesce(total_device_uninstalls, 0) as total_device_uninstalls,
 
