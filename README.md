@@ -16,8 +16,9 @@
 # Google Play dbt Package ([Docs](fivetran.github.io/dbt_google_play/))
 # 📣 What does this dbt package do?
 - Produces modeled tables that leverage Google Play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described [here](https://fivetran.com/docs/applications/google-play#schemainformation) and builds off the output of our [Google Play source package](https://github.com/fivetran/dbt_google_play_source).
-- The above mentioned models enable you [to better understand your GitHub issues and pull requests]. It achieves this by:
-  - doing thing
+- The above mentioned models enable you to better understand your Google Play app performance metrics at different granularities. It achieves this by:
+  - Providing intuitive reporting at the App Version, OS Version, Device Type, Country, Overview, and Product (Subscription + In-App Purchase) levels
+  - Aggregates all relevant application metrics into each of the reporting levels above
 - Generates a comprehensive data dictionary of your source and modeled Google Play data via the [dbt docs site](fivetran.github.io/dbt_google_play/)
 
 Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [Docs site](https://fivetran.github.io/dbt_google_play/#!/overview/google_play/models/?g_v=1) for more details about these models. 
