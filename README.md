@@ -20,16 +20,16 @@
   - doing thing
 - Generates a comprehensive data dictionary of your source and modeled Google Play data via the [dbt docs site](fivetran.github.io/dbt_google_play/)
 
-Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [Docs site](fivetran.github.io/dbt_google_play/) for more details about these models. 
+Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [Docs site](https://fivetran.github.io/dbt_google_play/#!/overview/google_play/models/?g_v=1) for more details about these models. 
 
 | **model**                  | **description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [google_play__app_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__app_version_report)             | Each record represents a GitHub issue, enriched with data about its assignees, milestones, and time comparisons.                                             |
-| [google_play__country_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__country_report)     | Each record represents a GitHub pull request, enriched with data about its repository, reviewers, and durations between review requests, merges and reviews. |
-| [google_play__device_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__device_report)     | Each record represents a single day, enriched with metrics about PRs and issues that were created and closed during that period.                              |
-| [google_play__os_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__os_version_report)    | Each record represents a single week, enriched with metrics about PRs and issues that were created and closed during that period.                             |
-| [google_play__overview_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__overview_report)   | Each record represents a single month, enriched with metrics about PRs and issues that were created and closed during that period.                            |
-| [google_play__finance_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__finance_report) | Each record represents a single quarter, enriched with metrics about PRs and issues that were created and closed during that period.                          |
+| [google_play__app_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__app_version_report)             | Each record represents daily installs, crashes and ANRs, and ratings by app version and app.                                              |
+| [google_play__country_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__country_report)     | Each record represents daily installs, ratings, and store performance metrics by user country and app. |
+| [google_play__device_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__device_report)     | Each record represents daily installs and ratings by device model type and app.                              |
+| [google_play__os_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__os_version_report)    | Each record represents daily installs, crashes and ANRs, and ratings by android os version and app.                             |
+| [google_play__overview_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__overview_report)   | Each record represents daily installs, crashes and ANRs, store performance metrics, and ratings by app.                            |
+| [google_play__finance_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__finance_report) | Each record represents daily subscriptions, purchases, and different kinds of revenue by product and country.                          |
 
 # 🤔 Who is the target user of this dbt package?
 - You use Fivetran's [Google Play connector](https://fivetran.com/docs/applications/google-play)
