@@ -29,3 +29,5 @@ models:
     +materialized: table
     intermediate:
       +materialized: ephemeral
+      int_google_play__earnings:
+        +materialized: view # since we reference it with adapter in  a downstream model
