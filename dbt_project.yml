@@ -28,5 +28,4 @@ models:
     +schema: google_play
     +materialized: table
     intermediate:
-      +schema: int_google_play
       +materialized: ephemeral
