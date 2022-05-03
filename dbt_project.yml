@@ -25,5 +25,8 @@ vars:
 
 models:
   google_play:
-    # +schema: google_play # TODO: uncomment before releasing
+    +schema: google_play
     +materialized: table
+    intermediate:
+      +schema: int_google_play
+      +materialized: ephemeral
