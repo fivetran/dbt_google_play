@@ -68,11 +68,11 @@ overview_join as (
         on install_metrics.date_day = ratings.date_day
         and install_metrics.package_name = ratings.package_name
     full outer join store_performance
-        on store_performance.date_day = install_metrics.date_day
-        and store_performance.package_name = install_metrics.package_name
+        on store_performance.date_day = coalesce(install_metrics.date_day, ratings.date_day)
+        and store_performance.package_name = coalesce(install_metrics.package_name, ratings.package_name)
     full outer join crashes
-        on install_metrics.date_day = crashes.date_day
-        and install_metrics.package_name = crashes.package_name
+        on coalesce(install_metrics.date_day, ratings.date_day, store_performance.date_day) = crashes.date_day
+        and coalesce(install_metrics.package_name, ratings.package_name, store_performance.package_name) = crashes.package_name
 ),
 
 -- to backfill in days with NULL values for rolling metrics, we'll create partitions to batch them together with records that have non-null values

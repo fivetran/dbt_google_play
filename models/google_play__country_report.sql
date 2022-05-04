@@ -73,9 +73,9 @@ country_join as (
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.country, 'null_country') = coalesce(ratings.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
     full outer join store_performance_metrics
-        on store_performance_metrics.date_day = install_metrics.date_day
-        and store_performance_metrics.package_name = install_metrics.package_name
-        and coalesce(store_performance_metrics.country_region, 'null_country') = coalesce(install_metrics.country, 'null_country')
+        on store_performance_metrics.date_day = coalesce(install_metrics.date_day, ratings.date_day)
+        and store_performance_metrics.package_name = coalesce(install_metrics.package_name, ratings.package_name)
+        and coalesce(store_performance_metrics.country_region, 'null_country') = coalesce(install_metrics.country, ratings.country, 'null_country')
 ), 
 
 -- to backfill in days with NULL values for rolling metrics, we'll create partitions to batch them together with records that have non-null values

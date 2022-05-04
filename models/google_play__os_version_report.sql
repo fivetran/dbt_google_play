@@ -60,10 +60,10 @@ app_version_join as (
         -- coalesce null os versions otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.android_os_version, 'null_os_version') = coalesce(ratings.android_os_version, 'null_os_version') -- in the source package we aggregate all null device-type records together into one batch per day
     full outer join crashes
-        on install_metrics.date_day = crashes.date_day
-        and install_metrics.package_name = crashes.package_name
+        on coalesce(install_metrics.date_day, ratings.date_day) = crashes.date_day
+        and coalesce(install_metrics.package_name, ratings.package_name) = crashes.package_name
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
-        and coalesce(install_metrics.android_os_version, 'null_os_version') = coalesce(crashes.android_os_version, 'null_os_version') -- in the source package we aggregate all null device-type records together into one batch per day
+        and coalesce(install_metrics.android_os_version, ratings.android_os_version, 'null_os_version') = coalesce(crashes.android_os_version, 'null_os_version') -- in the source package we aggregate all null device-type records together into one batch per day
 ), 
 
 -- to backfill in days with NULL values for rolling metrics, we'll create partitions to batch them together with records that have non-null values
