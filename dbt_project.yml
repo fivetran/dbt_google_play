@@ -23,6 +23,8 @@ vars:
     earnings: "{{ ref('stg_google_play__earnings') }}"
     financial_stats_subscriptions_country: "{{ ref('stg_google_play__subscriptions_country') }}"
 
+    country_codes: "{{ ref('google_play__country_codes') }}"
+
 models:
   google_play:
     +schema: google_play

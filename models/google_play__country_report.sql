@@ -16,6 +16,12 @@ store_performance as (
     from {{ var('stats_store_performance_country') }}
 ), 
 
+country_codes as (
+
+    select *
+    from {{ var('country_codes') }}
+),
+
 install_metrics as (
 
     select
@@ -128,7 +134,10 @@ final as (
 
     select 
         date_day,
-        country,
+        country as country_short,
+        coalesce(country_codes.alternative_country_name, country_codes.country_name) as country_long,
+        country_codes.region,
+        country_codes.sub_region,
         package_name,
         device_installs,
         device_uninstalls,
@@ -157,6 +166,8 @@ final as (
         round(cast(total_store_acquisitions as {{ dbt_utils.type_numeric() }}) / nullif(total_store_visitors, 0), 4) as rolling_store_conversion_rate,
         coalesce(total_device_installs, 0) - coalesce(total_device_uninstalls, 0) as net_device_installs
     from fill_values
+    left join country_codes
+        on country_codes.country_code_alpha_2 = fill_values.country
 )
 
 select *

@@ -1,10 +1,16 @@
-{{ config(enabled=var('google_play__using_earnings', False)) }} -- maybe this should be disabled by default? 
+{{ config(enabled=var('google_play__using_earnings', False)) }}
 
 with earnings as (
 
     select *
     from {{ ref('int_google_play__earnings') }}
 ), 
+
+country_codes as (
+
+    select *
+    from {{ var('country_codes') }}
+),
 
 product_info as (
 
@@ -29,13 +35,13 @@ daily_join as (
     select
         -- these columns are the grain of this model (day + country + package_name + product (sku_id))
         coalesce(earnings.date_day, subscriptions.date_day) as date_day,
-        coalesce(earnings.country, subscriptions.country) as country,
+        coalesce(earnings.country_short, subscriptions.country) as country_short,
         coalesce(earnings.package_name, subscriptions.package_name) as package_name,
         coalesce(earnings.sku_id, subscriptions.product_id) as sku_id,
         earnings.merchant_currency, -- this will just be null if there aren't transactions on a given day
 
         {% for t in earning_transaction_metrics -%}
-            {% if t.column|lower not in ['country', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {% if t.column|lower not in ['country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
         coalesce( {{ t.column }}, 0) as {{ t.column|lower }},
             {% endif %}
         {%- endfor -%}
@@ -50,7 +56,7 @@ daily_join as (
         on earnings.date_day = subscriptions.date_day
         and earnings.package_name = subscriptions.package_name
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
-        and coalesce(earnings.country, 'null_country') = coalesce(subscriptions.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
+        and coalesce(earnings.country_short, 'null_country') = coalesce(subscriptions.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
         and earnings.sku_id = subscriptions.product_id
 ), 
 
@@ -61,7 +67,7 @@ create_partitions as (
     select 
         *,
         sum(case when total_active_subscriptions is null 
-                then 0 else 1 end) over (partition by country, sku_id order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
+                then 0 else 1 end) over (partition by country_short, sku_id order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
     from daily_join
 ), 
 
@@ -70,12 +76,12 @@ fill_values as (
     select 
         -- we can include these in earning_transaction_metrics but wanna keep them in this column position
         date_day,
-        country,
+        country_short,
         package_name, 
         sku_id,
         merchant_currency,
         {% for t in earning_transaction_metrics -%}
-            {%- if t.column|lower not in ['country', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {%- if t.column|lower not in ['country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
@@ -85,7 +91,7 @@ fill_values as (
 
         -- now we'll take the non-null value for each partitioned batch and propagate it across the rows included in the batch
         first_value( total_active_subscriptions ) over (
-            partition by total_active_subscriptions_partition, country, sku_id order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
+            partition by total_active_subscriptions_partition, country_short, sku_id order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
     from create_partitions
 ), 
 
@@ -93,12 +99,12 @@ final_values as (
 
     select 
         date_day,
-        country,
+        country_short,
         package_name, 
         sku_id,
         merchant_currency,
         {% for t in earning_transaction_metrics -%}
-            {%- if t.column|lower not in ['country', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {%- if t.column|lower not in ['country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
@@ -112,16 +118,21 @@ final_values as (
 
 ), 
 
-add_product_info as (
+add_product_country_info as (
 
     select 
         base.*,
-        product_info.product_title
+        product_info.product_title,
+        coalesce(country_codes.alternative_country_name, country_codes.country_name) as country_long,
+        country_codes.region,
+        country_codes.sub_region
     from {{ 'final_values' if var('google_play__using_subscriptions', False) else 'earnings' }} as base
     left join product_info 
         on base.package_name = product_info.package_name
         and base.sku_id = product_info.sku_id
+    left join country_codes 
+        on country_codes.country_code_alpha_2 = base.country_short
 )
 
 select *
-from add_product_info
+from add_product_country_info

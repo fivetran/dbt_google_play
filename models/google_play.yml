@@ -56,12 +56,18 @@ models:
           combination_of_columns:
             - package_name
             - date_day
-            - country
+            - country_short
     columns:
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
-      - name: country
+      - name: country_short
         description: '{{ doc("country") }}'
+      - name: country_long
+        description: Full name of the country.
+      - name: region
+        description: Geographical region of the country.
+      - name: sub_region
+        description: Geographical subregion of the country.
       - name: device_installs
         description: '{{ doc("daily_device_installs") }}'
       - name: device_uninstalls
@@ -120,56 +126,62 @@ models:
             - country
             - date_day
     columns:
-    - name: date_day
-      description: '{{ doc("date") }}'
-    - name: country
-      description: '{{ doc("country") }}'
-    - name: package_name
-      description: '{{ doc("package_name") }}'
-    - name: sku_id
-      description: '{{ doc("sku_id") }}' 
-    - name: merchant_currency
-      description: Currency to which the order was converted. This is the local currency you are paid in.
-    - name: new_subscriptions
-      description: '{{ doc("new_subscriptions") }}'
-    - name: cancelled_subscriptions
-      description: '{{ doc("cancelled_subscriptions") }}'
-    - name: total_active_subscriptions
-      description: '{{ doc("total_active_subscriptions") }}'
-    - name: net_amount
-      description: Net amount of revenue summed across the different transaction types.
-    - name: charge_amount
-      description: Amount of revenue brought in through `charge` transaction types (ie charging a customer for a subscription).
-    - name: charge_transactions
-      description: Number of distinct orders of the `charge` transaction type. 
-    - name: google_fee_amount
-      description: Amount of revenue paid to Google in fees. Transactions made in the European Economic Area will not include Google fees.
-    - name: google_fee_transactions
-      description: Number of distinct transactions of the `charge` transaction type. 
-    - name: tax_amount
-      description: Amount paid in taxes. 
-    - name: tax_transactions
-      description: Number of distinct transactions of `tax` type.
-    - name: charge_refund_amount
-      description: Amount paid in refunding users' charges.
-    - name: charge_refund_transactions
-      description: Number of distinct charge refunds made. 
-    - name: google_fee_refund_amount
-      description: Amount of revenue refunded to you from Google fees. 
-    - name: google_fee_refund_transactions
-      description: Number of distinct Google fee refunds made.
-    - name: tax_refund_amount
-      description: Amount of tax refunds paid to you.
-    - name: tax_refund_transactions
-      description: Number of distinct tax refunds made.
-    - name: other_amount
-      description: Amount of revenue from `other` or `NULL` transaction types.
-    - name: other_transactions
-      description: Number of distinct transactions of `other` or `NULL` transaction types.
-    - name: transactions 
-      description: Total number of distinct transactions made.
-    - name: product_title
-      description: Developer-specified name of the product. Shown in the buyer's locale.
+      - name: date_day
+        description: '{{ doc("date") }}'
+      - name: country_short
+        description: '{{ doc("country") }}'
+      - name: country_long
+        description: Full name of the country.
+      - name: region
+        description: Geographical region of the country.
+      - name: sub_region
+        description: Geographical subregion of the country.
+      - name: package_name
+        description: '{{ doc("package_name") }}'
+      - name: sku_id
+        description: '{{ doc("sku_id") }}' 
+      - name: merchant_currency
+        description: Currency to which the order was converted. This is the local currency you are paid in.
+      - name: new_subscriptions
+        description: '{{ doc("new_subscriptions") }}'
+      - name: cancelled_subscriptions
+        description: '{{ doc("cancelled_subscriptions") }}'
+      - name: total_active_subscriptions
+        description: '{{ doc("total_active_subscriptions") }}'
+      - name: net_amount
+        description: Net amount of revenue summed across the different transaction types.
+      - name: charge_amount
+        description: Amount of revenue brought in through `charge` transaction types (ie charging a customer for a subscription).
+      - name: charge_transactions
+        description: Number of distinct orders of the `charge` transaction type. 
+      - name: google_fee_amount
+        description: Amount of revenue paid to Google in fees. Transactions made in the European Economic Area will not include Google fees.
+      - name: google_fee_transactions
+        description: Number of distinct transactions of the `charge` transaction type. 
+      - name: tax_amount
+        description: Amount paid in taxes. 
+      - name: tax_transactions
+        description: Number of distinct transactions of `tax` type.
+      - name: charge_refund_amount
+        description: Amount paid in refunding users' charges.
+      - name: charge_refund_transactions
+        description: Number of distinct charge refunds made. 
+      - name: google_fee_refund_amount
+        description: Amount of revenue refunded to you from Google fees. 
+      - name: google_fee_refund_transactions
+        description: Number of distinct Google fee refunds made.
+      - name: tax_refund_amount
+        description: Amount of tax refunds paid to you.
+      - name: tax_refund_transactions
+        description: Number of distinct tax refunds made.
+      - name: other_amount
+        description: Amount of revenue from `other` or `NULL` transaction types.
+      - name: other_transactions
+        description: Number of distinct transactions of `other` or `NULL` transaction types.
+      - name: transactions 
+        description: Total number of distinct transactions made.
+      - name: product_title
+        description: Developer-specified name of the product. Shown in the buyer's locale.
 
   - name: google_play__app_version_report
     description: >

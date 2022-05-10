@@ -22,10 +22,10 @@ daily_country_metrics as (
 
     select 
         transaction_date as date_day,
-        buyer_country as country, -- rolling up past states/territories
+        buyer_country as country_short, -- rolling up past states/territories
         sku_id, -- this will be a subscription or in-app product
         package_name,
-        merchant_currency, -- should be the same across the whole table....idk does this need to be included?? it would be wack to sum up different currencies if they changed
+        merchant_currency,
         sum(net_order_amount) as net_amount,
         count(distinct order_id) as transactions
         {% for t in transaction_types %}
