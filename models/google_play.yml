@@ -123,7 +123,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - sku_id
-            - country
+            - country_short
             - date_day
     columns:
       - name: date_day
