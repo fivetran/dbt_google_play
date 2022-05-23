@@ -15,11 +15,11 @@
 
 # Google Play Transformation dbt Package ([Docs](https://fivetran.github.io/dbt_google_play/))
 # 📣 What does this dbt package do?
-- Produces modeled tables that leverage google_play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described by [this ERD](https://fivetran.com/docs/applications/google-play#schemainformation) and build off the output of our [Google Play source package](https://github.com/fivetran/dbt_google_play_source).
+- Produces modeled tables that leverage Google Play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described by [this ERD](https://fivetran.com/docs/applications/google-play#schemainformation) and build off the output of our [Google Play source package](https://github.com/fivetran/dbt_google_play_source).
 - Enables you to better understand your Google Play app performance metrics at different granularities. It achieves this by:
   - Providing intuitive reporting at the App Version, OS Version, Device Type, Country, Overview, and Product (Subscription + In-App Purchase) levels
   - Aggregates all relevant application metrics into each of the reporting levels above
-- Generates a comprehensive data dictionary of your source and modeled google_play data through the [dbt docs site](https://fivetran.github.io/dbt_google_play/).
+- Generates a comprehensive data dictionary of your source and modeled Google Play data through the [dbt docs site](https://fivetran.github.io/dbt_google_play/).
 
 The following table provides a detailed list of all models materialized within this package by default. 
 > TIP: See more details about these models in the package's [dbt docs site](https://fivetran.github.io/dbt_google_play/#!/overview?g_v=1).
@@ -38,11 +38,11 @@ The following table provides a detailed list of all models materialized within t
 ## Step 1: Prerequisites
 To use this dbt package, you must have the following:
 
-- At least one Fivetran google_play connector syncing data into your destination.
+- At least one Fivetran Google Play connector syncing data into your destination.
 - A **BigQuery**, **Snowflake**, **Redshift**, **PostgreSQL**, or **Databricks** destination.
 
 ## Step 2: Install the package
-Include the following google_play_source package version in your `packages.yml` file:
+Include the following Google Play package version in your `packages.yml` file:
 > TIP: Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 ```yaml
 packages:
@@ -51,7 +51,7 @@ packages:
 
 ```
 ## Step 3: Define database and schema variables
-By default, this package runs using your destination and the `google_play` schema. If this is not where your google_play data is (for example, if your Google Play schema is named `google_play_fivetran`), add the following configuration to your root `dbt_project.yml` file:
+By default, this package runs using your destination and the `google_play` schema. If this is not where your Google Play data is (for example, if your Google Play schema is named `google_play_fivetran`), add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 vars:
@@ -72,7 +72,7 @@ vars:
 <details><summary>Expand for configurations</summary>
     
 ### Change the build schema
-By default, this package builds the google_play staging models within a schema titled (`<target_schema>` + `_stg_google_play`) and your google_play modeling models within a schema titled (`<target_schema>` + `_google_play`) in your destination. If this is not where you would like your google_play data to be written to, add the following configuration to your root `dbt_project.yml` file:
+By default, this package builds the Google Play staging models within a schema titled (`<target_schema>` + `_stg_google_play`) and your Google Play modeling models within a schema titled (`<target_schema>` + `_google_play`) in your destination. If this is not where you would like your Google Play data to be written to, add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 models:
