@@ -4,7 +4,6 @@ with earnings as (
 
     select *
     from {{ var('earnings') }}
-
 ), 
 
 calc_net_amounts as (

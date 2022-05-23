@@ -4,7 +4,6 @@ with earnings as (
 
     select *
     from {{ var('earnings') }}
-
 ), 
 
 -- figure out when the latest transaction involving this product was to find the latest product title used for it
@@ -17,7 +16,6 @@ transaction_recency as (
         max(transaction_pt_timestamp) as last_transaction_at
     from earnings
     group by 1,2,3
-
 ), 
 
 order_product_records as (
@@ -26,7 +24,6 @@ order_product_records as (
         *,
         row_number() over(partition by sku_id order by last_transaction_at desc) as n
     from transaction_recency
-
 ), 
 
 latest_product_record as (
@@ -37,7 +34,6 @@ latest_product_record as (
         sku_id
     from order_product_records
     where n = 1
-
 )
 
 select *
