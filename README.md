@@ -72,7 +72,7 @@ vars:
 <details><summary>Expand for configurations</summary>
     
 ### Change the build schema
-By default, this package builds the Google Play staging models within a schema titled (`<target_schema>` + `_stg_google_play`) and your Google Play modeling models within a schema titled (`<target_schema>` + `_google_play`) in your destination. If this is not where you would like your Google Play data to be written to, add the following configuration to your root `dbt_project.yml` file:
+By default, this package builds the Google Play staging models within a schema titled (`<target_schema>` + `_google_play_source`) and your Google Play modeling models within a schema titled (`<target_schema>` + `_google_play`) in your destination. If this is not where you would like your Google Play data to be written to, add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 models:
@@ -122,6 +122,8 @@ packages:
 The Fivetran team maintaining this package _only_ maintains the latest version of the package. We highly recommend you stay consistent with the [latest version](https://hub.getdbt.com/fivetran/google_play/latest/) of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_google_play/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
 
 ## Opinionated Decisions
+In creating this package, which is meant for a wide range of use cases, we had to take opinionated stances on a few different questions we came across during development. We've consolidated significant choices we made in the [DECISIONLOG.md](https://github.com/fivetran/dbt_google_play/blob/main/DECISIONLOG.md), and will continue to update as the package evolves. We are always open to and encourage feedback on these choices, and the package in general.
+
 ## Contributions
 A small team of analytics engineers at Fivetran develops these dbt packages. However, the packages are made better by community contributions! 
 
