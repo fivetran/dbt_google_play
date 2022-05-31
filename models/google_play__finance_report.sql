@@ -17,7 +17,7 @@ product_info as (
     select *
     from {{ ref('int_google_play__latest_product_info') }}
 
--- there's honestly quite a bit in here since we only need to do backfilling stuff if there is indeed a full outer join
+-- there's honestly quite a bit in here since we only need to do backfilling stuff if there is indeed a full outer join 
 {% if var('google_play__using_subscriptions', False) -%}
 ), 
 
