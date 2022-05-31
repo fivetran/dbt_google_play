@@ -1,9 +1,3 @@
 packages:
-  # - local: ../dbt_google_play_source
-  - git: https://github.com/fivetran/dbt_google_play_source.git
-    revision: main
-    warn-unpinned: false
-
-  # TODO: uncomment and remove above before release
-  # - package: fivetran/google_play_source
-  #   version: [">=0.1.0", "<0.2.0"]
+  - package: fivetran/google_play_source
+    version: [">=0.1.0", "<0.2.0"]
