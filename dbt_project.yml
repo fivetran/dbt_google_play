@@ -1,8 +1,7 @@
 name: 'google_play'
-version: '0.1.0'
+version: '0.2.0'
 config-version: 2
-require-dbt-version: [">=1.0.0", "<2.0.0"]
-
+require-dbt-version: [">=1.3.0", "<2.0.0"]
 vars:
   google_play:
     stats_installs_app_version: "{{ ref('stg_google_play__stats_installs_app_version') }}"
@@ -22,9 +21,7 @@ vars:
     stats_ratings_overview: "{{ ref('stg_google_play__stats_ratings_overview') }}"
     earnings: "{{ ref('stg_google_play__earnings') }}"
     financial_stats_subscriptions_country: "{{ ref('stg_google_play__subscriptions_country') }}"
-
     country_codes: "{{ ref('google_play__country_codes') }}"
-
 models:
   google_play:
     +schema: google_play
@@ -32,4 +29,4 @@ models:
     intermediate:
       +materialized: ephemeral
       int_google_play__earnings:
-        +materialized: view # since we reference it with adapter in  a downstream model
+        +materialized: view
