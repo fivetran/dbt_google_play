@@ -122,6 +122,7 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
+            - package_name
             - sku_id
             - country_short
             - date_day
