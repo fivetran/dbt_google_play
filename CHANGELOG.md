@@ -1,3 +1,6 @@
+# dbt_google_play v0.2.1
+- Added `package_name` field to unique column test in google_play__finance_report test
+
 # dbt_google_play v0.2.0
 
 ## 🚨 Breaking Changes 🚨:
