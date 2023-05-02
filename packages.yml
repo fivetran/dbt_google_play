@@ -1,3 +1,6 @@
 packages:
-- package: fivetran/google_play_source
-  version: [">=0.2.0", "<0.3.0"]
+# - package: fivetran/google_play_source
+#   version: [">=0.2.0", "<0.3.0"]
+- git: https://github.com/fivetran/dbt_apple_store_source.git
+  revision: bug/add-alt-country-names
+  warn-unpinned: false

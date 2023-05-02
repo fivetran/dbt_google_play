@@ -47,7 +47,7 @@ Include the following Google Play package version in your `packages.yml` file:
 ```yaml
 packages:
   - package: fivetran/google_play
-    version: [">=0.1.0", "<0.2.0"]
+    version: [">=0.3.0", "<0.4.0"]
 
 ```
 ## Step 3: Define database and schema variables
