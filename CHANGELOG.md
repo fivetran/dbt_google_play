@@ -6,9 +6,9 @@
   - This is a 🚨**breaking change**🚨 as you will need to re-seed (`dbt seed --full-refresh`) the `google_play__country_codes` file again.
 
 ## Under the Hood:
-- Documents the `google_play__country_codes` seed file in yml ([PR #10](https://github.com/fivetran/dbt_google_play/pull/10)).
-- Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job ([PR #9](https://github.com/fivetran/dbt_google_play/pull/9)).
-- Updated the pull request [templates](/.github) ([PR #9](https://github.com/fivetran/dbt_google_play/pull/9)).
+[PR #9](https://github.com/fivetran/dbt_google_play/pull/9) includes the following changes:
+- Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job.
+- Updated the pull request [templates](/.github).
 
 # dbt_google_play v0.2.0
 
