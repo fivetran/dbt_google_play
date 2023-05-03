@@ -41,15 +41,17 @@ To use this dbt package, you must have the following:
 - At least one Fivetran Google Play connector syncing data into your destination.
 - A **BigQuery**, **Snowflake**, **Redshift**, **PostgreSQL**, or **Databricks** destination.
 
-## Step 2: Install the package
+## Step 2: Install the package (skip if also using the `app_reporting` transformation package)
 Include the following Google Play package version in your `packages.yml` file:
 > TIP: Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 ```yaml
 packages:
   - package: fivetran/google_play
-    version: [">=0.3.0", "<0.4.0"]
-
+    version: [">=0.3.0", "<0.4.0"] # we recommend using ranges to capture non-breaking changes automatically
 ```
+
+Do NOT include the `google_play_source` package in this file. The transformation package itself has a dependency on it and will install the source package as well.
+
 ## Step 3: Define database and schema variables
 By default, this package runs using your destination and the `google_play` schema. If this is not where your Google Play data is (for example, if your Google Play schema is named `google_play_fivetran`), add the following configuration to your root `dbt_project.yml` file:
 
