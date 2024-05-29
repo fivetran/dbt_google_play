@@ -8,7 +8,9 @@ table_variables:
     - earnings
   google_play__using_subscriptions:
     - financial_stats_subscriptions_country
-    
+
+requires_dbt_seed: true
+
 destination_configurations:
   databricks:
     dispatch:
