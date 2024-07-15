@@ -1,3 +1,5 @@
+ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
+
 with installs as (
 
     select *
@@ -20,8 +22,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by android_os_version, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by android_os_version, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by source_relation, android_os_version, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by source_relation, android_os_version, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -29,6 +31,7 @@ app_version_join as (
 
     select 
         -- these 3 columns are the grain of this model
+        install_metrics.source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.android_os_version, ratings.android_os_version, crashes.android_os_version) as android_os_version,
         coalesce(install_metrics.package_name, ratings.package_name, crashes.package_name) as package_name,
@@ -56,10 +59,12 @@ app_version_join as (
     from install_metrics
     full outer join ratings
         on install_metrics.date_day = ratings.date_day
+        and install_metrics.source_relation = ratings.source_relation
         and install_metrics.package_name = ratings.package_name
         -- coalesce null os versions otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.android_os_version, 'null_os_version') = coalesce(ratings.android_os_version, 'null_os_version') -- in the source package we aggregate all null device-type records together into one batch per day
     full outer join crashes
+        install_metrics.source_relation,
         on coalesce(install_metrics.date_day, ratings.date_day) = crashes.date_day
         and coalesce(install_metrics.package_name, ratings.package_name) = crashes.package_name
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
@@ -77,7 +82,7 @@ create_partitions as (
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
-                then 0 else 1 end) over (partition by android_os_version, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
+                then 0 else 1 end) over (partition by source_relation, android_os_version, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
     {%- endfor %}
     from app_version_join
 ), 
@@ -86,6 +91,7 @@ create_partitions as (
 fill_values as (
 
     select 
+        .source_relation,
         date_day,
         android_os_version,
         package_name,
@@ -105,7 +111,7 @@ fill_values as (
         {% for metric in rolling_metrics -%}
 
         , first_value( {{ metric }} ) over (
-            partition by {{ metric | lower }}_partition, android_os_version, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
+            partition by source_relation, {{ metric | lower }}_partition, android_os_version, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
 
         {%- endfor %}
     from create_partitions
@@ -114,6 +120,7 @@ fill_values as (
 final as (
 
     select 
+        .source_relation,
         date_day,
         android_os_version,
         package_name,

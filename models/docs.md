@@ -21,3 +21,6 @@ Cumulative number of users that visited your store listing and installed your ap
 {% docs rolling_store_conversion_rate %}
 Rolling percentage of store listing visitors who installed your app within a given country. The ratio of `total_store_acquisitions` to `total_store_visitors`.
 {% enddocs %}
+{% docs source_relation %}
+The source of the record if the unioning functionality is being used. If not this field will be empty.
+{% enddocs %}

@@ -1,3 +1,5 @@
+ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
+
 {{ config(enabled=var('google_play__using_earnings', False)) }}
 
 with earnings as (
@@ -34,6 +36,7 @@ daily_join as (
 
     select
         -- these columns are the grain of this model (day + country + package_name + product (sku_id))
+        earnings.source_relation,
         coalesce(earnings.date_day, subscriptions.date_day) as date_day,
         coalesce(earnings.country_short, subscriptions.country) as country_short,
         coalesce(earnings.package_name, subscriptions.package_name) as package_name,
@@ -54,6 +57,7 @@ daily_join as (
     from earnings
     full outer join subscriptions
         on earnings.date_day = subscriptions.date_day
+        and earnings.source_relation = subscriptions.source_relation
         and earnings.package_name = subscriptions.package_name
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
         and coalesce(earnings.country_short, 'null_country') = coalesce(subscriptions.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
@@ -67,7 +71,7 @@ create_partitions as (
     select 
         *,
         sum(case when total_active_subscriptions is null 
-                then 0 else 1 end) over (partition by country_short, sku_id order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
+                then 0 else 1 end) over (partition by source_relation, country_short, sku_id order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
     from daily_join
 ), 
 
@@ -75,6 +79,7 @@ fill_values as (
 
     select 
         -- we can include these in earning_transaction_metrics but wanna keep them in this column position
+        .source_relation,
         date_day,
         country_short,
         package_name, 
@@ -91,13 +96,14 @@ fill_values as (
 
         -- now we'll take the non-null value for each partitioned batch and propagate it across the rows included in the batch
         first_value( total_active_subscriptions ) over (
-            partition by total_active_subscriptions_partition, country_short, sku_id order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
+            partition by source_relation, total_active_subscriptions_partition, country_short, sku_id order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
     from create_partitions
 ), 
 
 final_values as (
 
     select 
+        .source_relation,
         date_day,
         country_short,
         package_name, 
@@ -129,9 +135,11 @@ add_product_country_info as (
     from {{ 'final_values' if var('google_play__using_subscriptions', False) else 'earnings' }} as base
     left join product_info 
         on base.package_name = product_info.package_name
+        and base.source_relation = product_info.source_relation
         and base.sku_id = product_info.sku_id
     left join country_codes 
         on country_codes.country_code_alpha_2 = base.country_short
+        and country_codes.source_relation = base.source_relation
 )
 
 select *

@@ -1,3 +1,5 @@
+ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
+
 with installs as (
 
     select *
@@ -26,8 +28,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by source_relation, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by source_relation, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -35,6 +37,7 @@ overview_join as (
 
     select 
         -- these 2 columns are the grain of this model
+        install_metrics.source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, store_performance.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.package_name, ratings.package_name, store_performance.package_name, crashes.package_name) as package_name,
 
@@ -66,11 +69,14 @@ overview_join as (
     from install_metrics
     full outer join ratings
         on install_metrics.date_day = ratings.date_day
+        and install_metrics.source_relation = ratings.source_relation
         and install_metrics.package_name = ratings.package_name
     full outer join store_performance
+        store_performance.source_relation,
         on store_performance.date_day = coalesce(install_metrics.date_day, ratings.date_day)
         and store_performance.package_name = coalesce(install_metrics.package_name, ratings.package_name)
     full outer join crashes
+        install_metrics.source_relation,
         on coalesce(install_metrics.date_day, ratings.date_day, store_performance.date_day) = crashes.date_day
         and coalesce(install_metrics.package_name, ratings.package_name, store_performance.package_name) = crashes.package_name
 ),
@@ -86,7 +92,7 @@ create_partitions as (
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
-                then 0 else 1 end) over (partition by package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
+                then 0 else 1 end) over (partition by source_relation, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
     {%- endfor %}
     from overview_join
 ), 
@@ -95,6 +101,7 @@ create_partitions as (
 fill_values as (
 
     select 
+        .source_relation,
         date_day,
         package_name,
         active_devices_last_30_days,
@@ -116,7 +123,7 @@ fill_values as (
         {% for metric in rolling_metrics -%}
 
         , first_value( {{ metric }} ) over (
-            partition by {{ metric | lower }}_partition, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
+            partition by source_relation, {{ metric | lower }}_partition, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
 
         {%- endfor %}
     from create_partitions
@@ -125,6 +132,7 @@ fill_values as (
 final as (
 
     select 
+        .source_relation,
         date_day,
         package_name,
         device_installs,

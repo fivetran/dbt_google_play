@@ -1,3 +1,5 @@
+ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
+
 {{ config(enabled=var('google_play__using_earnings', False)) }} 
 
 with earnings as (
@@ -22,7 +24,7 @@ order_product_records as (
 
     select 
         *,
-        row_number() over(partition by sku_id order by last_transaction_at desc) as n
+        row_number() over(partition by source_relation, sku_id order by last_transaction_at desc) as n
     from transaction_recency
 ), 
 

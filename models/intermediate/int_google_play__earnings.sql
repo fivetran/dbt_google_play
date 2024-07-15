@@ -1,3 +1,5 @@
+ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
+
 {{ config(enabled=var('google_play__using_earnings', False)) }} 
 
 with earnings as (
@@ -10,7 +12,7 @@ calc_net_amounts as (
 
     select 
         *,
-        sum(amount_merchant_currency) over (partition by order_id) as net_order_amount
+        sum(amount_merchant_currency) over (partition by source_relation, order_id) as net_order_amount
     from earnings
 ),
 
@@ -20,6 +22,7 @@ daily_country_metrics as (
 {% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="transaction_type") %}
 
     select 
+        .source_relation,
         transaction_date as date_day,
         buyer_country as country_short, -- rolling up past states/territories
         sku_id, -- this will be a subscription or in-app product

@@ -1,3 +1,4 @@
+UPDATE TESTS AND CHECK SOURCE_RELATION ADDED PROPERLY!!! (delete line when done.)
 version: 2
 
 models:
@@ -8,10 +9,13 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
+            - source_relation
             - package_name
             - date_day
             - device
     columns:
+      - name: source_relation
+        description: "{{ doc('source_relation') }}"
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
       - name: device
@@ -54,10 +58,13 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
+            - source_relation
             - package_name
             - date_day
             - country_short
     columns:
+      - name: source_relation
+        description: "{{ doc('source_relation') }}"
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
       - name: country_short
@@ -122,10 +129,13 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
+            - source_relation
             - sku_id
             - country_short
             - date_day
     columns:
+      - name: source_relation
+        description: "{{ doc('source_relation') }}"
       - name: date_day
         description: '{{ doc("date") }}'
       - name: country_short
@@ -190,10 +200,13 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
+            - source_relation
             - package_name
             - date_day
             - app_version_code
     columns:
+      - name: source_relation
+        description: "{{ doc('source_relation') }}"
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
       - name: app_version_code
@@ -240,10 +253,13 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
+            - source_relation
             - package_name
             - date_day
             - android_os_version
     columns:
+      - name: source_relation
+        description: "{{ doc('source_relation') }}"
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
       - name: android_os_version
@@ -289,9 +305,12 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
+            - source_relation
             - package_name
             - date_day
     columns:
+      - name: source_relation
+        description: "{{ doc('source_relation') }}"
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
       - name: android_os_version

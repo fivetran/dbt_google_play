@@ -1,3 +1,5 @@
+ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
+
 with installs as (
 
     select *
@@ -20,8 +22,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by source_relation, app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by source_relation, app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -29,6 +31,7 @@ app_version_join as (
 
     select 
         -- these 3 columns are the grain of this model
+        install_metrics.source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.app_version_code, ratings.app_version_code, crashes.app_version_code) as app_version_code,
         coalesce(install_metrics.package_name, ratings.package_name, crashes.package_name) as package_name,
@@ -56,10 +59,12 @@ app_version_join as (
     from install_metrics
     full outer join ratings
         on install_metrics.date_day = ratings.date_day
+        and install_metrics.source_relation = ratings.source_relation
         and install_metrics.package_name = ratings.package_name
         -- choosing an arbitrary negative integer as we can't coalesce with a string like 'null_version_code'. null app version codes will cause fanout
         and coalesce(install_metrics.app_version_code, -5) = coalesce(ratings.app_version_code, -5) -- this really doesn't happen IRL but let's be safe
     full outer join crashes
+        install_metrics.source_relation,
         on coalesce(install_metrics.date_day, ratings.date_day) = crashes.date_day
         and coalesce(install_metrics.package_name, ratings.package_name) = crashes.package_name
         and coalesce(install_metrics.app_version_code, ratings.app_version_code, -5) = coalesce(crashes.app_version_code, -5)
@@ -76,7 +81,7 @@ create_partitions as (
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
-                then 0 else 1 end) over (partition by app_version_code, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
+                then 0 else 1 end) over (partition by source_relation, app_version_code, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
     {%- endfor %}
     from app_version_join
 ), 
@@ -85,6 +90,7 @@ create_partitions as (
 fill_values as (
 
     select 
+        .source_relation,
         date_day,
         app_version_code,
         package_name,
@@ -104,7 +110,7 @@ fill_values as (
         {% for metric in rolling_metrics -%}
 
         , first_value( {{ metric }} ) over (
-            partition by {{ metric | lower }}_partition, app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
+            partition by source_relation, {{ metric | lower }}_partition, app_version_code, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
 
         {%- endfor %}
     from create_partitions
@@ -113,6 +119,7 @@ fill_values as (
 final as (
 
     select 
+        .source_relation,
         date_day,
         app_version_code,
         package_name,
