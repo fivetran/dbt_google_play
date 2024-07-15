@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 {{ config(enabled=var('google_play__using_earnings', False)) }} 
 
 with earnings as (
@@ -11,13 +9,14 @@ with earnings as (
 -- figure out when the latest transaction involving this product was to find the latest product title used for it
 transaction_recency as (
 
-    select 
+    select
+        source_relation,
         package_name,
         product_title,
         sku_id,
         max(transaction_pt_timestamp) as last_transaction_at
     from earnings
-    group by 1,2,3
+    {{ dbt_utils.group_by(4) }}
 ), 
 
 order_product_records as (
@@ -30,7 +29,8 @@ order_product_records as (
 
 latest_product_record as (
 
-    select 
+    select
+        source_relation,
         package_name,
         product_title,
         sku_id

@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 with installs as (
 
     select *
@@ -83,8 +81,8 @@ country_join as (
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.country, 'null_country') = coalesce(ratings.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
     full outer join store_performance_metrics
-        store_performance_metrics.source_relation,
         on store_performance_metrics.date_day = coalesce(install_metrics.date_day, ratings.date_day)
+        and store_performance_metrics.source_relation = coalesce(install_metrics.source_relation, ratings.source_relation)
         and store_performance_metrics.package_name = coalesce(install_metrics.package_name, ratings.package_name)
         and coalesce(store_performance_metrics.country_region, 'null_country') = coalesce(install_metrics.country, ratings.country, 'null_country')
 ), 
@@ -109,7 +107,7 @@ create_partitions as (
 fill_values as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         country,
         package_name,
@@ -139,7 +137,7 @@ fill_values as (
 final as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         country as country_short,
         coalesce(country_codes.alternative_country_name, country_codes.country_name) as country_long,
@@ -175,7 +173,6 @@ final as (
     from fill_values
     left join country_codes
         on country_codes.country_code_alpha_2 = fill_values.country
-        and country_codes.source_relation = fill_values.source_relation
 )
 
 select *

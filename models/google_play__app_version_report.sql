@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 with installs as (
 
     select *
@@ -64,8 +62,8 @@ app_version_join as (
         -- choosing an arbitrary negative integer as we can't coalesce with a string like 'null_version_code'. null app version codes will cause fanout
         and coalesce(install_metrics.app_version_code, -5) = coalesce(ratings.app_version_code, -5) -- this really doesn't happen IRL but let's be safe
     full outer join crashes
-        install_metrics.source_relation,
         on coalesce(install_metrics.date_day, ratings.date_day) = crashes.date_day
+        and coalesce(install_metrics.source_relation, ratings.source_relation) = crashes.source_relation
         and coalesce(install_metrics.package_name, ratings.package_name) = crashes.package_name
         and coalesce(install_metrics.app_version_code, ratings.app_version_code, -5) = coalesce(crashes.app_version_code, -5)
 ), 
@@ -90,7 +88,7 @@ create_partitions as (
 fill_values as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         app_version_code,
         package_name,
@@ -119,7 +117,7 @@ fill_values as (
 final as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         app_version_code,
         package_name,

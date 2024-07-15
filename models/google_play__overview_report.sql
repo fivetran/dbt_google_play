@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 with installs as (
 
     select *
@@ -37,7 +35,7 @@ overview_join as (
 
     select 
         -- these 2 columns are the grain of this model
-        install_metrics.source_relation,
+        coalesce(install_metrics.source_relation, ratings.source_relation, store_performance.source_relation, crashes.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, store_performance.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.package_name, ratings.package_name, store_performance.package_name, crashes.package_name) as package_name,
 
@@ -72,12 +70,12 @@ overview_join as (
         and install_metrics.source_relation = ratings.source_relation
         and install_metrics.package_name = ratings.package_name
     full outer join store_performance
-        store_performance.source_relation,
         on store_performance.date_day = coalesce(install_metrics.date_day, ratings.date_day)
+        and store_performance.source_relation = coalesce(install_metrics.source_relation, ratings.source_relation)
         and store_performance.package_name = coalesce(install_metrics.package_name, ratings.package_name)
     full outer join crashes
-        install_metrics.source_relation,
         on coalesce(install_metrics.date_day, ratings.date_day, store_performance.date_day) = crashes.date_day
+        and coalesce(install_metrics.source_relation, ratings.source_relation, store_performance.source_relation) = crashes.source_relation
         and coalesce(install_metrics.package_name, ratings.package_name, store_performance.package_name) = crashes.package_name
 ),
 
@@ -101,7 +99,7 @@ create_partitions as (
 fill_values as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         package_name,
         active_devices_last_30_days,
@@ -132,7 +130,7 @@ fill_values as (
 final as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         package_name,
         device_installs,

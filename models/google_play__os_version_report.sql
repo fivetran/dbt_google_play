@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 with installs as (
 
     select *
@@ -31,7 +29,7 @@ app_version_join as (
 
     select 
         -- these 3 columns are the grain of this model
-        install_metrics.source_relation,
+        coalesce(install_metrics.source_relation, ratings.source_relation, crashes.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.android_os_version, ratings.android_os_version, crashes.android_os_version) as android_os_version,
         coalesce(install_metrics.package_name, ratings.package_name, crashes.package_name) as package_name,
@@ -64,8 +62,8 @@ app_version_join as (
         -- coalesce null os versions otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.android_os_version, 'null_os_version') = coalesce(ratings.android_os_version, 'null_os_version') -- in the source package we aggregate all null device-type records together into one batch per day
     full outer join crashes
-        install_metrics.source_relation,
         on coalesce(install_metrics.date_day, ratings.date_day) = crashes.date_day
+        and coalesce(install_metrics.source_relation, ratings.source_relation) = crashes.source_relation
         and coalesce(install_metrics.package_name, ratings.package_name) = crashes.package_name
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.android_os_version, ratings.android_os_version, 'null_os_version') = coalesce(crashes.android_os_version, 'null_os_version') -- in the source package we aggregate all null device-type records together into one batch per day
@@ -91,7 +89,7 @@ create_partitions as (
 fill_values as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         android_os_version,
         package_name,
@@ -120,7 +118,7 @@ fill_values as (
 final as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         android_os_version,
         package_name,

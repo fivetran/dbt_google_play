@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 {{ config(enabled=var('google_play__using_earnings', False)) }}
 
 with earnings as (
@@ -79,7 +77,7 @@ fill_values as (
 
     select 
         -- we can include these in earning_transaction_metrics but wanna keep them in this column position
-        .source_relation,
+        source_relation,
         date_day,
         country_short,
         package_name, 
@@ -103,7 +101,7 @@ fill_values as (
 final_values as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         country_short,
         package_name, 
@@ -139,7 +137,6 @@ add_product_country_info as (
         and base.sku_id = product_info.sku_id
     left join country_codes 
         on country_codes.country_code_alpha_2 = base.country_short
-        and country_codes.source_relation = base.source_relation
 )
 
 select *

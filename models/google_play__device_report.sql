@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 with installs as (
 
     select *
@@ -77,7 +75,7 @@ create_partitions as (
 fill_values as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         device,
         package_name,
@@ -104,7 +102,7 @@ fill_values as (
 final as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         device,
         package_name,

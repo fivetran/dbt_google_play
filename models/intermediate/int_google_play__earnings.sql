@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 {{ config(enabled=var('google_play__using_earnings', False)) }} 
 
 with earnings as (
@@ -22,7 +20,7 @@ daily_country_metrics as (
 {% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="transaction_type") %}
 
     select 
-        .source_relation,
+        source_relation,
         transaction_date as date_day,
         buyer_country as country_short, -- rolling up past states/territories
         sku_id, -- this will be a subscription or in-app product
@@ -35,7 +33,7 @@ daily_country_metrics as (
         , count( distinct case when lower(transaction_type) = '{{ t | lower }}' then order_id end ) as {{ t | replace(' ', '_') | lower }}_transactions
         {% endfor %}
     from calc_net_amounts
-    {{ dbt_utils.group_by(n=5) }}
+    {{ dbt_utils.group_by(6) }}
 )
 
 select *

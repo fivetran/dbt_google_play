@@ -1,5 +1,3 @@
-ADD source_relation WHERE NEEDED + CHECK JOINS AND WINDOW FUNCTIONS! (Delete this line when done.)
-
 with store_performance as (
 
     select *
@@ -9,13 +7,13 @@ with store_performance as (
 store_performance_rollup as (
 
     select 
-        .source_relation,
+        source_relation,
         date_day,
         package_name,
         sum(store_listing_acquisitions) as store_listing_acquisitions,
         sum(store_listing_visitors) as store_listing_visitors
     from store_performance
-    group by 1,2
+    {{ dbt_utils.group_by(3) }}
 ),
 
 store_performance_metrics as (
