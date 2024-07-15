@@ -34,7 +34,7 @@ daily_join as (
 
     select
         -- these columns are the grain of this model (day + country + package_name + product (sku_id))
-        earnings.source_relation,
+        coalesce(earnings.source_relation, subscriptions.source_relationdate_day) as source_relation,
         coalesce(earnings.date_day, subscriptions.date_day) as date_day,
         coalesce(earnings.country_short, subscriptions.country) as country_short,
         coalesce(earnings.package_name, subscriptions.package_name) as package_name,

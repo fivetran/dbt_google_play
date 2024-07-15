@@ -22,8 +22,8 @@ install_metrics as (
 device_join as (
 
     select 
-        -- these 3 columns are the grain of this model
-        install_metrics.source_relation,
+        -- these 4 columns are the grain of this model
+        coalesce(install_metrics.source_relation, ratings.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day) as date_day,
         coalesce(install_metrics.device, ratings.device) as device, -- device type
         coalesce(install_metrics.package_name, ratings.package_name) as package_name,

@@ -34,7 +34,7 @@ install_metrics as (
 overview_join as (
 
     select 
-        -- these 2 columns are the grain of this model
+        -- these 3 columns are the grain of this model
         coalesce(install_metrics.source_relation, ratings.source_relation, store_performance.source_relation, crashes.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, store_performance.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.package_name, ratings.package_name, store_performance.package_name, crashes.package_name) as package_name,

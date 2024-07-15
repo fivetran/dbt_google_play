@@ -28,7 +28,7 @@ install_metrics as (
 app_version_join as (
 
     select 
-        -- these 3 columns are the grain of this model
+        -- these 4 columns are the grain of this model
         coalesce(install_metrics.source_relation, ratings.source_relation, crashes.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.android_os_version, ratings.android_os_version, crashes.android_os_version) as android_os_version,
