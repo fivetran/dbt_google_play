@@ -84,7 +84,7 @@ fill_values as (
         sku_id,
         merchant_currency,
         {% for t in earning_transaction_metrics -%}
-            {%- if t.column|lower not in ['sourced_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {%- if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
@@ -108,7 +108,7 @@ final_values as (
         sku_id,
         merchant_currency,
         {% for t in earning_transaction_metrics -%}
-            {%- if t.column|lower not in ['sourced_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {%- if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
