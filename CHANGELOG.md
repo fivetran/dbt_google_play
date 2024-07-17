@@ -1,13 +1,39 @@
 # dbt_google_play v0.4.0
 [PR #14](https://github.com/fivetran/dbt_google_play/pull/14) includes the following updates:
+
+## 🚨 Breaking Changes 🚨
+- Updated the source identifier format for consistency with other packages and for compatibility with the `fivetran_utils.union_data` macro. The identifier variables now are:
+
+previous | current
+--------|---------
+`stats_installs_app_version_identifier` | `google_play_stats_installs_app_version_identifier`
+`stats_crashes_app_version_identifier` | `google_play_stats_crashes_app_version_identifier`
+`stats_ratings_app_version_identifier` | `google_play_stats_ratings_app_version_identifier`
+`stats_installs_device_identifier` | `google_play_stats_installs_device_identifier`
+`stats_ratings_device_identifier` | `google_play_stats_ratings_device_identifier`
+`stats_installs_os_version_identifier` | `google_play_stats_installs_os_version_identifier`
+`stats_ratings_os_version_identifier` | `google_play_stats_ratings_os_version_identifier`
+`stats_crashes_os_version_identifier` | `google_play_stats_crashes_os_version_identifier`
+`stats_installs_country_identifier` | `google_play_stats_installs_country_identifier`
+`stats_ratings_country_identifier` | `google_play_stats_ratings_country_identifier`
+`stats_store_performance_country_identifier` | `google_play_stats_store_performance_country_identifier`
+`stats_store_performance_traffic_source_identifier` | `google_play_stats_store_performance_traffic_source_identifier`
+`stats_installs_overview_identifier` | `google_play_stats_installs_overview_identifier`
+`stats_crashes_overview_identifier` | `google_play_stats_crashes_overview_identifier`
+`stats_ratings_overview_identifier` | `google_play_stats_ratings_overview_identifier`
+`earnings_identifier` | `google_play_earnings_identifier`
+`financial_stats_subscriptions_country_identifier` | `google_play_financial_stats_subscriptions_country_identifier`
+
+- If you are using the previous identifier, be sure to update to the current version!
+
 ## Feature update 🎉
-- Unioning capability! This adds the ability to union source data from multiple google_play connectors. Refer to the [README](https://github.com/fivetran/dbt_google_play/blob/main/README.md) for more details.
+- Unioning capability! This adds the ability to union source data from multiple google_play connectors. Refer to the [README](https://github.com/fivetran/dbt_google_play/blob/main/README.md#union-multiple-connectors) for more details.
 
 ## Under the hood 🚘
 - In the source package, updated tmp models to union source data using the `fivetran_utils.union_data` macro. 
 - To distinguish which source each field comes from, added `source_relation` column in each staging and downstream model and applied the `fivetran_utils.source_relation` macro.
 - Updated tests to account for the new `source_relation` column.
-    - The `source_relation` column is included in all joins and window function partition clauses in the transform package. 
+    - The `source_relation` column is included in all joins and window function partition clauses. 
 
 # dbt_google_play v0.3.0
 

@@ -47,7 +47,7 @@ Include the following Google Play package version in your `packages.yml` file:
 ```yaml
 packages:
   - package: fivetran/google_play
-    version: [">=0.3.0", "<0.4.0"] # we recommend using ranges to capture non-breaking changes automatically
+    version: [">=0.4.0", "<0.5.0"] # we recommend using ranges to capture non-breaking changes automatically
 ```
 
 Do NOT include the `google_play_source` package in this file. The transformation package itself has a dependency on it and will install the source package as well.
@@ -77,7 +77,7 @@ In order to map longform territory names to their ISO country codes, we have ada
 You will need to `dbt seed` the `google_play__country_codes` [file](https://github.com/fivetran/dbt_google_play_source/blob/main/seeds/google_play__country_codes.csv) just once.
 
 ## (Optional) Step 6: Additional configurations
-<details><summary>Expand for configurations</summary>
+<details open><summary>Expand/collapse configurations</summary>
 
 ### Union multiple connectors
 If you have multiple google_play connectors in Fivetran and would like to use this package on all of them simultaneously, we have provided functionality to do so. The package will union all of the data together and pass the unioned table into the transformations. You will be able to see which source it came from in the `source_relation` column of each model. To use this functionality, you will need to set either the `google_play_union_schemas` OR `google_play_union_databases` variables (cannot do both) in your root `dbt_project.yml` file:
@@ -109,7 +109,7 @@ If an individual source table has a different name than the package expects, add
 
 ```yml
 vars:
-    <default_source_table_name>_identifier: your_table_name 
+    google_play_<default_source_table_name>_identifier: your_table_name 
 ```
 </details>
 
@@ -130,7 +130,7 @@ This dbt package is dependent on the following dbt packages. Please be aware tha
 ```yml
 packages:
     - package: fivetran/google_play_source
-      version: [">=0.3.0", "<0.4.0"]
+      version: [">=0.4.0", "<0.5.0"]
 
     - package: fivetran/fivetran_utils
       version: [">=0.4.0", "<0.5.0"]
