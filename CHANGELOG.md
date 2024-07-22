@@ -28,12 +28,16 @@ previous | current
 
 ## Feature update 🎉
 - Unioning capability! This adds the ability to union source data from multiple google_play connectors. Refer to the [README](https://github.com/fivetran/dbt_google_play/blob/main/README.md#union-multiple-connectors) for more details.
+- Added a `source_relation` column in each staging model for tracking the source of each record.
+  - The `source_relation` column is also persisted from the staging models to the end models.
 
 ## Under the hood 🚘
-- In the source package, updated tmp models to union source data using the `fivetran_utils.union_data` macro. 
-- To distinguish which source each field comes from, added `source_relation` column in each staging and downstream model and applied the `fivetran_utils.source_relation` macro.
-- Updated tests to account for the new `source_relation` column.
-    - The `source_relation` column is included in all joins and window function partition clauses. 
+- Added the `source_relation` column to necessary joins. 
+- In the source package:
+  - Updated tmp models to union source data using the `fivetran_utils.union_data` macro. 
+  - Applied the `fivetran_utils.source_relation` macro in each staging model to determine the `source_relation`.
+  - Updated tests to account for the new `source_relation` column.
+- Included auto-releaser GitHub Actions workflow to automate future releases.
 
 # dbt_google_play v0.3.0
 
