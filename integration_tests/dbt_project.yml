@@ -6,7 +6,9 @@ config-version: 2
 models:
   +schema: "google_play_{{ var('directed_schema','dev') }}" ## To be used for validation testing
 
-vars: 
+vars:
+  # google_play__using_subscriptions: true # uncomment this line when regenerating docs!
+  # google_play__using_earnings: true # uncomment this line when regenerating docs!
   google_play_schema: google_play_integrations_tests
   google_play_source:
     google_play_stats_installs_app_version_identifier: "stats_installs_app_version"
