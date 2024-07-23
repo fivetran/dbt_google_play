@@ -9,26 +9,28 @@ with earnings as (
 -- figure out when the latest transaction involving this product was to find the latest product title used for it
 transaction_recency as (
 
-    select 
+    select
+        source_relation,
         package_name,
         product_title,
         sku_id,
         max(transaction_pt_timestamp) as last_transaction_at
     from earnings
-    group by 1,2,3
+    {{ dbt_utils.group_by(4) }}
 ), 
 
 order_product_records as (
 
     select 
         *,
-        row_number() over(partition by sku_id order by last_transaction_at desc) as n
+        row_number() over(partition by source_relation, sku_id order by last_transaction_at desc) as n
     from transaction_recency
 ), 
 
 latest_product_record as (
 
-    select 
+    select
+        source_relation,
         package_name,
         product_title,
         sku_id

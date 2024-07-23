@@ -14,15 +14,16 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by source_relation, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by source_relation, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
 device_join as (
 
     select 
-        -- these 3 columns are the grain of this model
+        -- these 4 columns are the grain of this model
+        coalesce(install_metrics.source_relation, ratings.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day) as date_day,
         coalesce(install_metrics.device, ratings.device) as device, -- device type
         coalesce(install_metrics.package_name, ratings.package_name) as package_name,
@@ -48,6 +49,7 @@ device_join as (
     from install_metrics
     full outer join ratings
         on install_metrics.date_day = ratings.date_day
+        and install_metrics.source_relation = ratings.source_relation
         and install_metrics.package_name = ratings.package_name
         -- coalesce null device types otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.device, 'null_device') = coalesce(ratings.device, 'null_device') -- in the source package we aggregate all null device-type records together into one batch per day
@@ -64,7 +66,7 @@ create_partitions as (
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
-                then 0 else 1 end) over (partition by device, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
+                then 0 else 1 end) over (partition by source_relation, device, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
     {%- endfor %}
     from device_join
 ), 
@@ -73,6 +75,7 @@ create_partitions as (
 fill_values as (
 
     select 
+        source_relation,
         date_day,
         device,
         package_name,
@@ -90,7 +93,7 @@ fill_values as (
         {% for metric in rolling_metrics -%}
 
         , first_value( {{ metric }} ) over (
-            partition by {{ metric | lower }}_partition, device, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
+            partition by source_relation, {{ metric | lower }}_partition, device, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
 
         {%- endfor %}
     from create_partitions
@@ -99,6 +102,7 @@ fill_values as (
 final as (
 
     select 
+        source_relation,
         date_day,
         device,
         package_name,

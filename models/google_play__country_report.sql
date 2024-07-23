@@ -26,8 +26,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by source_relation, country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by source_relation, country, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -35,15 +35,16 @@ store_performance_metrics as (
 
     select
         *,
-        sum(store_listing_acquisitions) over (partition by country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_acquisitions,
-        sum(store_listing_visitors) over (partition by country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_visitors
+        sum(store_listing_acquisitions) over (partition by source_relation, country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_acquisitions,
+        sum(store_listing_visitors) over (partition by source_relation, country_region, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_visitors
     from store_performance
 ), 
 
 country_join as (
 
     select 
-        -- these 3 columns are the grain of this model
+        -- these 4 columns are the grain of this model
+        coalesce(install_metrics.source_relation, ratings.source_relation, store_performance_metrics.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, store_performance_metrics.date_day) as date_day,
         coalesce(install_metrics.country, ratings.country, store_performance_metrics.country_region) as country,
         coalesce(install_metrics.package_name, ratings.package_name, store_performance_metrics.package_name) as package_name,
@@ -75,11 +76,13 @@ country_join as (
     from install_metrics
     full outer join ratings
         on install_metrics.date_day = ratings.date_day
+        and install_metrics.source_relation = ratings.source_relation
         and install_metrics.package_name = ratings.package_name
         -- coalesce null countries otherwise they'll cause fanout with the full outer join
         and coalesce(install_metrics.country, 'null_country') = coalesce(ratings.country, 'null_country') -- in the source package we aggregate all null country records together into one batch per day
     full outer join store_performance_metrics
         on store_performance_metrics.date_day = coalesce(install_metrics.date_day, ratings.date_day)
+        and store_performance_metrics.source_relation = coalesce(install_metrics.source_relation, ratings.source_relation)
         and store_performance_metrics.package_name = coalesce(install_metrics.package_name, ratings.package_name)
         and coalesce(store_performance_metrics.country_region, 'null_country') = coalesce(install_metrics.country, ratings.country, 'null_country')
 ), 
@@ -95,7 +98,7 @@ create_partitions as (
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
-                then 0 else 1 end) over (partition by country, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
+                then 0 else 1 end) over (partition by source_relation, country, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
     {%- endfor %}
     from country_join
 ), 
@@ -104,6 +107,7 @@ create_partitions as (
 fill_values as (
 
     select 
+        source_relation,
         date_day,
         country,
         package_name,
@@ -124,7 +128,7 @@ fill_values as (
         {% for metric in rolling_metrics -%}
 
         , first_value( {{ metric }} ) over (
-            partition by {{ metric | lower }}_partition, country, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
+            partition by source_relation, {{ metric | lower }}_partition, country, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
 
         {%- endfor %}
     from create_partitions
@@ -133,6 +137,7 @@ fill_values as (
 final as (
 
     select 
+        source_relation,
         date_day,
         country as country_short,
         coalesce(country_codes.alternative_country_name, country_codes.country_name) as country_long,
