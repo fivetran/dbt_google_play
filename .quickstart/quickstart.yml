@@ -16,3 +16,12 @@ destination_configurations:
     dispatch:
       - macro_namespace: dbt_utils
         search_order: [ 'spark_utils', 'dbt_utils' ]
+
+public_models: [
+  "google_play__app_version_report",
+  "google_play__device_report",
+  "google_play__finance_report",
+  "google_play__country_report",
+  "google_play__os_version_report",
+  "google_play__overview_report"
+]
