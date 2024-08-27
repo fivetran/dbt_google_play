@@ -21,6 +21,8 @@
   - Aggregates all relevant application metrics into each of the reporting levels above
 - Generates a comprehensive data dictionary of your source and modeled Google Play data through the [dbt docs site](https://fivetran.github.io/dbt_google_play/).
 
+<!--section=“google_play_transformation_model"-->
+
 The following table provides a detailed list of all tables materialized within this package by default.
 > TIP: See more details about these tables in the package's [dbt docs site](https://fivetran.github.io/dbt_google_play/#!/overview?g_v=1).
 
@@ -33,6 +35,7 @@ The following table provides a detailed list of all tables materialized within t
 | [google_play__overview_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__overview_report)   | Each record represents daily installs, crashes and ANRs, store performance metrics, and ratings by app.                            |
 | [google_play__finance_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__finance_report) | Each record represents daily subscriptions, purchases, and different kinds of revenue by product and country.                          |
 
+<!--section-end-->
 ## How do I use the dbt package?
 
 ### Step 1: Prerequisites
