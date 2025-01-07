@@ -67,7 +67,7 @@ vars:
 ```
 
 ### Step 4: Disable or enable source tables
-Your Google Play connector might not sync every table that this package expects. If you have financial and/or subscriptions data, namely the `earnings` and `financial_stats_subscriptions_country` tables, add the following variable(s) to your `dbt_project.yml` file:
+Your Google Play connection might not sync every table that this package expects. If you have financial and/or subscriptions data, namely the `earnings` and `financial_stats_subscriptions_country` tables, add the following variable(s) to your `dbt_project.yml` file:
 
 ```yml
 vars:
