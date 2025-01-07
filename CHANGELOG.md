@@ -1,3 +1,9 @@
+# dbt_google_play version.version
+
+## Documentation
+- Added Quickstart model counts to README. ([#18](https://github.com/fivetran/dbt_google_play/pull/18))
+- Corrected references to connectors and connections in the README. ([#18](https://github.com/fivetran/dbt_google_play/pull/18))
+
 # dbt_google_play v0.4.0
 [PR #14](https://github.com/fivetran/dbt_google_play/pull/14) includes the following updates:
 
