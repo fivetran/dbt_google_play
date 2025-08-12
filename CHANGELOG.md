@@ -1,3 +1,24 @@
+# dbt_google_play v1.0.0
+
+[PR #22](https://github.com/fivetran/dbt_google_play/pull/22) includes the following updates:
+
+## Breaking Changes
+
+### Source Package Consolidation
+- Removed the dependency on the `fivetran/google_play_source` package.
+  - All functionality from the source package has been merged into this transformation package for improved maintainability and clarity.
+  - If you reference `fivetran/google_play_source` in your `packages.yml`, you must remove this dependency to avoid conflicts.
+  - Any source overrides referencing the `fivetran/google_play_source` package will also need to be removed or updated to reference this package.
+  - Update any google_play_source-scoped variables to be scoped to only under this package. See the [README](https://github.com/fivetran/dbt_google_play/blob/main/README.md) for how to configure the build schema of staging models.
+- As part of the consolidation, vars are no longer used to reference staging models, and only sources are represented by vars. Staging models are now referenced directly with `ref()` in downstream models.
+
+### dbt Fusion Compatibility Updates
+- Updated package to maintain compatibility with dbt-core versions both before and after v1.10.6, which introduced a breaking change to multi-argument test syntax (e.g., `unique_combination_of_columns`).
+- Temporarily removed unsupported tests to avoid errors and ensure smoother upgrades across different dbt-core versions. These tests will be reintroduced once a safe migration path is available.
+  - Removed all `dbt_utils.unique_combination_of_columns` tests.
+  - Removed all `accepted_values` tests.
+  - Moved `loaded_at_field: _fivetran_synced` under the `config:` block in `src_google_play.yml`.
+
 # dbt_google_play v0.5.0
 
 [PR #19](https://github.com/fivetran/dbt_google_play/pull/19) includes the following updates:

@@ -3,7 +3,7 @@
 with earnings as (
 
     select *
-    from {{ var('earnings') }}
+    from {{ ref('stg_google_play__earnings') }}
 ), 
 
 calc_net_amounts as (

@@ -52,10 +52,10 @@ Include the following Google Play package version in your `packages.yml` file:
 ```yaml
 packages:
   - package: fivetran/google_play
-    version: [">=0.5.0", "<0.6.0"] # we recommend using ranges to capture non-breaking changes automatically
+    version: [">=1.0.0", "<1.1.0"] # we recommend using ranges to capture non-breaking changes automatically
 ```
 
-Do NOT include the `google_play_source` package in this file. The transformation package itself has a dependency on it and will install the source package as well.
+> All required sources and staging models are now bundled into this transformation package. Do not include `fivetran/google_play_source` in your `packages.yml` since this package has been deprecated.
 
 ### Step 3: Define database and schema variables
 By default, this package runs using your destination and the `google_play` schema. If this is not where your Google Play data is (for example, if your Google Play schema is named `google_play_fivetran`), add the following configuration to your root `dbt_project.yml` file:
@@ -101,10 +101,10 @@ By default, this package builds the Google Play staging models within a schema t
 
 ```yml
 models:
-    google_play_source:
-      +schema: my_new_schema_name # leave blank for just the target_schema
     google_play:
-      +schema: my_new_schema_name # leave blank for just the target_schema
+      +schema: my_new_schema_name # Leave +schema: blank to use the default target_schema.
+      staging:
+        +schema: my_new_schema_name # Leave +schema: blank to use the default target_schema.
 ```
     
 #### Change the source table references
@@ -134,9 +134,6 @@ This dbt package is dependent on the following dbt packages. These dependencies 
     
 ```yml
 packages:
-    - package: fivetran/google_play_source
-      version: [">=0.5.0", "<0.6.0"]
-
     - package: fivetran/fivetran_utils
       version: [">=0.4.0", "<0.5.0"]
 

@@ -1,19 +1,19 @@
 with installs as (
 
     select *
-    from {{ var('stats_installs_os_version') }}
+    from {{ ref('stg_google_play__stats_installs_os_version') }}
 ), 
 
 ratings as (
 
     select *
-    from {{ var('stats_ratings_os_version') }}
+    from {{ ref('stg_google_play__stats_ratings_os_version') }}
 ), 
 
 crashes as (
 
     select *
-    from {{ var('stats_crashes_os_version') }}
+    from {{ ref('stg_google_play__stats_crashes_os_version') }}
 ), 
 
 install_metrics as (

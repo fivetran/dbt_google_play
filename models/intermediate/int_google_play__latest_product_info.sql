@@ -3,7 +3,7 @@
 with earnings as (
 
     select *
-    from {{ var('earnings') }}
+    from {{ ref('stg_google_play__earnings') }}
 ), 
 
 -- figure out when the latest transaction involving this product was to find the latest product title used for it
