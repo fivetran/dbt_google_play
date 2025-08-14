@@ -1,19 +1,19 @@
 with installs as (
 
     select *
-    from {{ var('stats_installs_overview') }}
+    from {{ ref('stg_google_play__stats_installs_overview') }}
 ), 
 
 ratings as (
 
     select *
-    from {{ var('stats_ratings_overview') }}
+    from {{ ref('stg_google_play__stats_ratings_overview') }}
 ), 
 
 crashes as (
 
     select *
-    from {{ var('stats_crashes_overview') }}
+    from {{ ref('stg_google_play__stats_crashes_overview') }}
 ), 
 
 store_performance as (

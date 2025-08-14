@@ -1,7 +1,7 @@
 with store_performance as (
 
     select *
-    from {{ var('stats_store_performance_country') }}
+    from {{ ref('stg_google_play__store_performance_country') }}
 ), 
 
 store_performance_rollup as (

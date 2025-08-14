@@ -1,13 +1,13 @@
 with installs as (
 
     select *
-    from {{ var('stats_installs_device') }}
+    from {{ ref('stg_google_play__stats_installs_device') }}
 ), 
 
 ratings as (
 
     select *
-    from {{ var('stats_ratings_device') }}
+    from {{ ref('stg_google_play__stats_ratings_device') }}
 ), 
 
 install_metrics as (

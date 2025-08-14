@@ -9,7 +9,7 @@ with earnings as (
 country_codes as (
 
     select *
-    from {{ var('country_codes') }}
+    from {{ ref('google_play__country_codes') }}
 ),
 
 product_info as (
@@ -24,7 +24,7 @@ product_info as (
 subscriptions as (
 
     select *
-    from {{ var('financial_stats_subscriptions_country') }}
+    from {{ ref('stg_google_play__subscriptions_country') }}
 ), 
 
 daily_join as (
