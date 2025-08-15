@@ -29,6 +29,9 @@ models:
     intermediate:
       +materialized: ephemeral
       int_google_play__earnings:
-        +materialized: view    staging:
+        +materialized: view    
+    staging:
       +schema: google_play_source
-      +materialized: view
+      +materialized: table
+      tmp:
+        +materialized: view

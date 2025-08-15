@@ -1,5 +1,4 @@
-
-# Google Play Transformation dbt Package ([Docs](https://fivetran.github.io/dbt_google_play/))
+# Google Play dbt Package ([Docs](https://fivetran.github.io/dbt_google_play/))
 
 <p align="left">
     <a alt="License"
@@ -17,7 +16,7 @@
 </p>
 
 ## What does this dbt package do?
-- Produces modeled tables that leverage Google Play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described by [this ERD](https://fivetran.com/docs/applications/google-play#schemainformation) and build off the output of our [Google Play source package](https://github.com/fivetran/dbt_google_play_source).
+- Produces modeled tables that leverage Google Play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described by [this ERD](https://fivetran.com/docs/applications/google-play#schemainformation).
 - Enables you to better understand your Google Play app performance metrics at different granularities. It achieves this by:
   - Providing intuitive reporting at the App Version, OS Version, Device Type, Country, Overview, and Product (Subscription + In-App Purchase) levels
   - Aggregates all relevant application metrics into each of the reporting levels above
@@ -81,7 +80,7 @@ vars:
 
 In order to map longform territory names to their ISO country codes, we have adapted the CSV from [lukes/ISO-3166-Countries-with-Regional-Codes](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes) to align Google and [Apple's](https://developer.apple.com/help/app-store-connect/reference/app-store-localizations/) country name formats for the [App Reporting](https://github.com/fivetran/dbt_app_reporting) combo package.
 
-You will need to `dbt seed` the `google_play__country_codes` [file](https://github.com/fivetran/dbt_google_play_source/blob/main/seeds/google_play__country_codes.csv) just once.
+You will need to `dbt seed` the `google_play__country_codes` [file](https://github.com/fivetran/dbt_google_play/blob/main/seeds/google_play__country_codes.csv) just once.
 
 ### (Optional) Step 6: Additional configurations
 <details open><summary>Expand/collapse configurations</summary>
@@ -97,7 +96,7 @@ vars:
 > NOTE: The native `source.yml` connection set up in the package will not function when the union schema/database feature is utilized. Although the data will be correctly combined, you will not observe the sources linked to the package models in the Directed Acyclic Graph (DAG). This happens because the package includes only one defined `source.yml`.
 
 To connect your multiple schema/database sources to the package models, follow the steps outlined in the [Union Data Defined Sources Configuration](https://github.com/fivetran/dbt_fivetran_utils/tree/releases/v0.4.latest#union_data-source) section of the Fivetran Utils documentation for the union_data macro. This will ensure a proper configuration and correct visualization of connections in the DAG.
-
+    
 #### Change the build schema
 By default, this package builds the Google Play staging models within a schema titled (`<target_schema>` + `_google_play_source`) and your Google Play modeling models within a schema titled (`<target_schema>` + `_google_play`) in your destination. If this is not where you would like your Google Play data to be written to, add the following configuration to your root `dbt_project.yml` file:
 
@@ -108,11 +107,11 @@ models:
       staging:
         +schema: my_new_schema_name # Leave +schema: blank to use the default target_schema.
 ```
-
+    
 #### Change the source table references
 If an individual source table has a different name than the package expects, add the table name as it appears in your destination to the respective variable:
 
-> IMPORTANT: See this project's [`dbt_project.yml`](https://github.com/fivetran/dbt_google_play_source/blob/main/dbt_project.yml) variable declarations to see the expected names.
+> IMPORTANT: See this project's [`dbt_project.yml`](https://github.com/fivetran/dbt_google_play/blob/main/dbt_project.yml) variable declarations to see the expected names.
 
 ```yml
 vars:
@@ -125,15 +124,15 @@ vars:
 ### (Optional) Step 7: Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>
-
+    
 Fivetran offers the ability for you to orchestrate your dbt project through [Fivetran Transformations for dbt Core™](https://fivetran.com/docs/transformations/dbt). Learn how to set up your project for orchestration through Fivetran in our [Transformations for dbt Core™ setup guides](https://fivetran.com/docs/transformations/dbt#setupguide).
 </details>
 <br>
-
+    
 ## Does this package have dependencies?
 This dbt package is dependent on the following dbt packages. These dependencies are installed by default within this package. For more information on the following packages, refer to the [dbt hub](https://hub.getdbt.com/) site.
 > IMPORTANT: If you have any of these dependent packages in your own `packages.yml` file, we highly recommend that you remove them from your root `packages.yml` to avoid package version conflicts.
-
+    
 ```yml
 packages:
     - package: fivetran/fivetran_utils
@@ -141,6 +140,9 @@ packages:
 
     - package: dbt-labs/dbt_utils
       version: [">=1.0.0", "<2.0.0"]
+
+    - package: dbt-labs/spark_utils
+      version: [">=0.3.0", "<0.4.0"]
 ```
 ## How is this package maintained and can I contribute?
 ### Package Maintenance
