@@ -1,25 +1,25 @@
 with installs as (
 
     select *
-    from {{ var('stats_installs_country') }}
+    from {{ ref('stg_google_play__stats_installs_country') }}
 ), 
 
 ratings as (
 
     select *
-    from {{ var('stats_ratings_country') }}
+    from {{ ref('stg_google_play__stats_ratings_country') }}
 ), 
 
 store_performance as (
 
     select *
-    from {{ var('stats_store_performance_country') }}
+    from {{ ref('stg_google_play__store_performance_country') }}
 ), 
 
 country_codes as (
 
     select *
-    from {{ var('country_codes') }}
+    from {{ ref('google_play__country_codes') }}
 ),
 
 install_metrics as (

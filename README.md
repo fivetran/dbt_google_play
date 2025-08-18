@@ -1,21 +1,22 @@
-<p align="center">
+# Google Play dbt Package ([Docs](https://fivetran.github.io/dbt_google_play/))
+
+<p align="left">
     <a alt="License"
         href="https://github.com/fivetran/dbt_google_play/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a>
-    <a alt="Fivetran-Release"
-        href="https://fivetran.com/docs/getting-started/core-concepts#releasephases">
-        <img src="https://img.shields.io/badge/Fivetran Release Phase-_Beta-orange.svg" /></a>
     <a alt="dbt-core">
         <img src="https://img.shields.io/badge/dbt_Core™_version->=1.3.0_,<2.0.0-orange.svg" /></a>
     <a alt="Maintained?">
         <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" /></a>
     <a alt="PRs">
         <img src="https://img.shields.io/badge/Contributions-welcome-blueviolet" /></a>
+    <a alt="Fivetran Quickstart Compatible"
+        href="https://fivetran.com/docs/transformations/dbt/quickstart">
+        <img src="https://img.shields.io/badge/Fivetran_Quickstart_Compatible%3F-yes-green.svg" /></a>
 </p>
 
-# Google Play Transformation dbt Package ([Docs](https://fivetran.github.io/dbt_google_play/))
 ## What does this dbt package do?
-- Produces modeled tables that leverage Google Play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described by [this ERD](https://fivetran.com/docs/applications/google-play#schemainformation) and build off the output of our [Google Play source package](https://github.com/fivetran/dbt_google_play_source).
+- Produces modeled tables that leverage Google Play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described by [this ERD](https://fivetran.com/docs/applications/google-play#schemainformation).
 - Enables you to better understand your Google Play app performance metrics at different granularities. It achieves this by:
   - Providing intuitive reporting at the App Version, OS Version, Device Type, Country, Overview, and Product (Subscription + In-App Purchase) levels
   - Aggregates all relevant application metrics into each of the reporting levels above
@@ -52,10 +53,10 @@ Include the following Google Play package version in your `packages.yml` file:
 ```yaml
 packages:
   - package: fivetran/google_play
-    version: [">=0.5.0", "<0.6.0"] # we recommend using ranges to capture non-breaking changes automatically
+    version: [">=1.0.0", "<1.1.0"] # we recommend using ranges to capture non-breaking changes automatically
 ```
 
-Do NOT include the `google_play_source` package in this file. The transformation package itself has a dependency on it and will install the source package as well.
+> All required sources and staging models are now bundled into this transformation package. Do not include `fivetran/google_play_source` in your `packages.yml` since this package has been deprecated.
 
 ### Step 3: Define database and schema variables
 By default, this package runs using your destination and the `google_play` schema. If this is not where your Google Play data is (for example, if your Google Play schema is named `google_play_fivetran`), add the following configuration to your root `dbt_project.yml` file:
@@ -79,7 +80,7 @@ vars:
 
 In order to map longform territory names to their ISO country codes, we have adapted the CSV from [lukes/ISO-3166-Countries-with-Regional-Codes](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes) to align Google and [Apple's](https://developer.apple.com/help/app-store-connect/reference/app-store-localizations/) country name formats for the [App Reporting](https://github.com/fivetran/dbt_app_reporting) combo package.
 
-You will need to `dbt seed` the `google_play__country_codes` [file](https://github.com/fivetran/dbt_google_play_source/blob/main/seeds/google_play__country_codes.csv) just once.
+You will need to `dbt seed` the `google_play__country_codes` [file](https://github.com/fivetran/dbt_google_play/blob/main/seeds/google_play__country_codes.csv) just once.
 
 ### (Optional) Step 6: Additional configurations
 <details open><summary>Expand/collapse configurations</summary>
@@ -101,16 +102,16 @@ By default, this package builds the Google Play staging models within a schema t
 
 ```yml
 models:
-    google_play_source:
-      +schema: my_new_schema_name # leave blank for just the target_schema
     google_play:
-      +schema: my_new_schema_name # leave blank for just the target_schema
+      +schema: my_new_schema_name # Leave +schema: blank to use the default target_schema.
+      staging:
+        +schema: my_new_schema_name # Leave +schema: blank to use the default target_schema.
 ```
     
 #### Change the source table references
 If an individual source table has a different name than the package expects, add the table name as it appears in your destination to the respective variable:
 
-> IMPORTANT: See this project's [`dbt_project.yml`](https://github.com/fivetran/dbt_google_play_source/blob/main/dbt_project.yml) variable declarations to see the expected names.
+> IMPORTANT: See this project's [`dbt_project.yml`](https://github.com/fivetran/dbt_google_play/blob/main/dbt_project.yml) variable declarations to see the expected names.
 
 ```yml
 vars:
@@ -134,14 +135,14 @@ This dbt package is dependent on the following dbt packages. These dependencies 
     
 ```yml
 packages:
-    - package: fivetran/google_play_source
-      version: [">=0.5.0", "<0.6.0"]
-
     - package: fivetran/fivetran_utils
       version: [">=0.4.0", "<0.5.0"]
 
     - package: dbt-labs/dbt_utils
       version: [">=1.0.0", "<2.0.0"]
+
+    - package: dbt-labs/spark_utils
+      version: [">=0.3.0", "<0.4.0"]
 ```
 ## How is this package maintained and can I contribute?
 ### Package Maintenance

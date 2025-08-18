@@ -1,5 +1,5 @@
 name: 'google_play_integration_tests'
-version: '0.5.0'
+version: '1.0.0'
 profile: 'integration_tests'
 config-version: 2
 
@@ -7,10 +7,10 @@ models:
   +schema: "google_play_{{ var('directed_schema','dev') }}" ## To be used for validation testing
 
 vars:
-  # google_play__using_subscriptions: true # uncomment this line when regenerating docs!
-  # google_play__using_earnings: true # uncomment this line when regenerating docs!
+  # google_play__using_subscriptions: true # @docs-include
+  # google_play__using_earnings: true # @docs-include
   google_play_schema: google_play_integrations_tests
-  google_play_source:
+  google_play:
     google_play_stats_installs_app_version_identifier: "stats_installs_app_version"
     google_play_stats_crashes_app_version_identifier: "stats_crashes_app_version"
     google_play_stats_ratings_app_version_identifier: "stats_ratings_app_version"
@@ -35,6 +35,8 @@ dispatch:
 
 
 seeds:
+  +docs:
+    show: False
   google_play_integration_tests:
     stats_installs_overview:
       +column_types:
@@ -44,3 +46,4 @@ seeds:
         app_version_code: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
 flags:
   send_anonymous_usage_stats: False
+  use_colors: True
