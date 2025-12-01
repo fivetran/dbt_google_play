@@ -1,3 +1,9 @@
+# dbt_google_play v1.1.0
+[PR #24](https://github.com/fivetran/dbt_google_play/pull/24) includes the following updates:
+
+## Features
+- Increases the required dbt version upper limit to v3.0.0.
+
 # dbt_google_play v1.0.0
 
 [PR #22](https://github.com/fivetran/dbt_google_play/pull/22) includes the following updates:
