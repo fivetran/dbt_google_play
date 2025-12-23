@@ -6,12 +6,12 @@
 -- this test ensures the daily_activity end model matches the prior version
 with prod as (
     select *
-    from {{ target.schema }}_google_play_prod.google_play__subscription_report
+    from {{ target.schema }}_google_play_prod.google_play__os_version_report
 ),
 
 dev as (
     select *
-    from {{ target.schema }}_google_play_dev.google_play__subscription_report
+    from {{ target.schema }}_google_play_dev.google_play__os_version_report
 ),
 
 prod_not_in_dev as (
