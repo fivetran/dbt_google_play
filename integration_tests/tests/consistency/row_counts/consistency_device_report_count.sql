@@ -6,11 +6,12 @@
 -- this test is to make sure the rows counts are the same between versions
 with prod as (
     select count(*) as prod_rows
-    from {{ target.schema }}_google_play_prod.google_play__device_report_count
+    from {{ target.schema }}_google_play_prod.google_play__device_report
+),
 
 dev as (
     select count(*) as dev_rows
-    from {{ target.schema }}_google_play_dev.google_play__device_report_count
+    from {{ target.schema }}_google_play_dev.google_play__device_report
 )
 
 -- test will return values and fail if the row counts don't match
