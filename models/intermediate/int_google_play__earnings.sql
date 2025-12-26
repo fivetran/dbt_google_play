@@ -16,8 +16,8 @@ calc_net_amounts as (
 
 daily_country_metrics as (
 
--- let's pivot out revenue metrics associated wit each type of transaction type
-{% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="transaction_type") %}
+-- let's pivot out revenue metrics associated with each type of transaction type
+{% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="transaction_type") if execute and flags.WHICH in ('run', 'build') else [] %}
 
     select 
         source_relation,
