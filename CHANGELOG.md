@@ -1,6 +1,6 @@
 # dbt_google_play v1.2.0
 
-[PR #27](https://github.com/fivetran/dbt_google_play/pull/27) includes the following updates:
+[PR #28](https://github.com/fivetran/dbt_google_play/pull/28) includes the following updates:
 
 - Fixes [issue #27](https://github.com/fivetran/dbt_google_play/issues/27) in which the `int_google_play__earnings` does not successfully compile for dbt Fusion
 
