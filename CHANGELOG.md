@@ -9,7 +9,7 @@ This PR includes the following updates:
 - Syntactic fixes applied to consistency tests. ([PR #26](https://github.com/fivetran/dbt_google_play/pull/26))
 
 ## Contributors
-- @waligob ([PR #28](https://github.com/fivetran/dbt_google_play/pull/28))
+-[@waligob](https://github.com/waligob) ([PR #28](https://github.com/fivetran/dbt_google_play/pull/28))
 
 # dbt_google_play v1.1.0
 [PR #24](https://github.com/fivetran/dbt_google_play/pull/24) includes the following updates:
