@@ -4,20 +4,12 @@ with earnings as (
 
     select *
     from {{ ref('stg_google_play__earnings') }}
-), 
-
-calc_net_amounts as (
-
-    select 
-        *,
-        sum(amount_merchant_currency) over (partition by source_relation, order_id) as net_order_amount
-    from earnings
-),
+),  
 
 daily_country_metrics as (
 
--- let's pivot out revenue metrics associated wit each type of transaction type
-{% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="transaction_type") %}
+-- let's pivot out revenue metrics associated with each type of transaction type
+{% set transaction_types = dbt_utils.get_column_values(table=ref('stg_google_play__earnings'), column="transaction_type") if execute and flags.WHICH in ('run', 'build') else [] %}
 
     select 
         source_relation,
@@ -26,13 +18,13 @@ daily_country_metrics as (
         sku_id, -- this will be a subscription or in-app product
         package_name,
         merchant_currency,
-        sum(net_order_amount) as net_amount,
+        sum(amount_merchant_currency) as net_amount,
         count(distinct order_id) as transactions
         {% for t in transaction_types %}
         , sum( case when lower(transaction_type) = '{{ t | lower }}' then amount_merchant_currency else 0 end ) as {{ t | replace(' ', '_') | lower }}_amount
         , count( distinct case when lower(transaction_type) = '{{ t | lower }}' then order_id end ) as {{ t | replace(' ', '_') | lower }}_transactions
         {% endfor %}
-    from calc_net_amounts
+    from earnings
     {{ dbt_utils.group_by(6) }}
 )
 

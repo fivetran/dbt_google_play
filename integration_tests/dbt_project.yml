@@ -1,5 +1,5 @@
 name: 'google_play_integration_tests'
-version: '1.1.0'
+version: '1.1.1'
 profile: 'integration_tests'
 config-version: 2
 
@@ -9,7 +9,7 @@ models:
 vars:
   # google_play__using_subscriptions: true # @docs-include
   # google_play__using_earnings: true # @docs-include
-  google_play_schema: google_play_integrations_tests
+  google_play_schema: google_play_integration_tests
   google_play:
     google_play_stats_installs_app_version_identifier: "stats_installs_app_version"
     google_play_stats_crashes_app_version_identifier: "stats_crashes_app_version"
