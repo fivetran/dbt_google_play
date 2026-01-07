@@ -1,6 +1,5 @@
 # dbt_google_play v1.1.1
-[PR #29](https://github.com/fivetran/dbt_google_play/pull/29) includes the following updates:
-
+[PR #30](https://github.com/fivetran/dbt_google_play/pull/30) includes the following updates:
 
 ## Schema/Data Change
 **1 total change • 0 breaking changes**
