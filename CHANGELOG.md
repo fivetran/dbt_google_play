@@ -1,8 +1,9 @@
 # dbt_google_play v1.1.1
 This PR includes the following updates:
 
-## Bug Fix
+## Bug Fixes
 - Fixed double-counting of net amounts in `int_google_play__earnings`. Previously, this intermediate calculation created duplicate `net_order_amount` values for each order line item, incorrectly summing total net amounts. The summation is now performed directly in the `daily_country_metrics` CTE in [`int_google_play__earnings`](https://github.com/fivetran/dbt_google_play/blob/main/models/intermediate/int_google_play__earnings.sql).  ([PR #26](https://github.com/fivetran/dbt_google_play/pull/26))
+- Added flags in `int_google_play__earnings` to fix dbt fusion compilation errors. ([PR #28](https://github.com/fivetran/dbt_google_play/pull/28))
 
 ## Under the Hood
 - Syntactic fixes applied to consistency tests. ([PR #26](https://github.com/fivetran/dbt_google_play/pull/26))
