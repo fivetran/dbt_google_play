@@ -9,6 +9,9 @@ table_variables:
   google_play__using_subscriptions:
     - financial_stats_subscriptions_country
 
+  _fivetran_quickstart_stats_store_performance_traffic_source:
+    - stats_store_performance_traffic_source
+
 requires_dbt_seed: true
 
 destination_configurations:
