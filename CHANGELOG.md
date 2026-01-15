@@ -8,7 +8,6 @@
 ## Under the Hood
 - In the `quickstart.yml` file:
   - Adds `table_variables` for relevant sources to prevent missing sources from blocking downstream Quickstart models.
-  - Adds `supported_vars` for Quickstart UI customization.
 
 # dbt_google_play v1.1.1
 [PR #30](https://github.com/fivetran/dbt_google_play/pull/30) includes the following updates:
