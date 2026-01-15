@@ -1,4 +1,5 @@
-# Google Play dbt Package ([Docs](https://fivetran.github.io/dbt_google_play/))
+<!--section="google-play_transformation_model"-->
+# Google Play dbt Package
 
 <p align="left">
     <a alt="License"
@@ -11,54 +12,77 @@
     <a alt="PRs">
         <img src="https://img.shields.io/badge/Contributions-welcome-blueviolet" /></a>
     <a alt="Fivetran Quickstart Compatible"
-        href="https://fivetran.com/docs/transformations/dbt/quickstart">
+        href="https://fivetran.com/docs/transformations/data-models/quickstart-management#quickstartmanagement">
         <img src="https://img.shields.io/badge/Fivetran_Quickstart_Compatible%3F-yes-green.svg" /></a>
 </p>
 
+This dbt package transforms data from Fivetran's Google Play connector into analytics-ready tables.
+
+## Resources
+
+- Number of materialized models¹: 40
+- Connector documentation
+  - [Google Play connector documentation](https://fivetran.com/docs/connectors/applications/google-play)
+  - [Google Play ERD](https://fivetran.com/docs/connectors/applications/google-play#schemainformation)
+- dbt package documentation
+  - [GitHub repository](https://github.com/fivetran/dbt_google_play)
+  - [dbt Docs](https://fivetran.github.io/dbt_google_play/#!/overview)
+  - [DAG](https://fivetran.github.io/dbt_google_play/#!/overview?g_v=1)
+  - [Changelog](https://github.com/fivetran/dbt_google_play/blob/main/CHANGELOG.md)
+
 ## What does this dbt package do?
-- Produces modeled tables that leverage Google Play data from [Fivetran's connector](https://fivetran.com/docs/applications/google-play) in the format described by [this ERD](https://fivetran.com/docs/applications/google-play#schemainformation).
-- Enables you to better understand your Google Play app performance metrics at different granularities. It achieves this by:
-  - Providing intuitive reporting at the App Version, OS Version, Device Type, Country, Overview, and Product (Subscription + In-App Purchase) levels
-  - Aggregates all relevant application metrics into each of the reporting levels above
-- Generates a comprehensive data dictionary of your source and modeled Google Play data through the [dbt docs site](https://fivetran.github.io/dbt_google_play/).
+This package enables you to better understand your Google Play app performance metrics at different granularities and aggregate all relevant application metrics. It creates enriched models with metrics focused on App Version, OS Version, Device Type, Country, Overview, and Product (Subscription + In-App Purchase) reporting levels.
 
-<!--section=“google_play_transformation_model"-->
+### Output schema
+Final output tables are generated in the following target schema:
 
-The following table provides a detailed list of all tables materialized within this package by default.
-> TIP: See more details about these tables in the package's [dbt docs site](https://fivetran.github.io/dbt_google_play/#!/overview?g_v=1).
+```
+<your_database>.<connector/schema_name>_google_play
+```
 
-| **Table**                  | **Description**                                                                                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [google_play__app_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__app_version_report)             | Each record represents daily installs, crashes and ANRs, and ratings by app version and app.                                              |
-| [google_play__country_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__country_report)     | Each record represents daily installs, ratings, and store performance metrics by user country and app. |
-| [google_play__device_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__device_report)     | Each record represents daily installs and ratings by device model type and app.                              |
-| [google_play__os_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__os_version_report)    | Each record represents daily installs, crashes and ANRs, and ratings by android os version and app.                             |
-| [google_play__overview_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__overview_report)   | Each record represents daily installs, crashes and ANRs, store performance metrics, and ratings by app.                            |
-| [google_play__finance_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__finance_report) | Each record represents daily subscriptions, purchases, and different kinds of revenue by product and country.                          |
+### Final output tables
 
-### Materialized Models
-Each Quickstart transformation job run materializes 40 models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
-<!--section-end-->
-## How do I use the dbt package?
+By default, this package materializes the following final tables:
 
-### Step 1: Prerequisites
+| Table | Description |
+| :---- | :---- |
+| [google_play__app_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__app_version_report) | Tracks daily installs, crashes, and user ratings by app version to monitor version stability, adoption rates, and quality. <br></br>**Example Analytics Questions:**<ul><li>Which app versions have the highest crash rates affecting user experience?</li><li>How do install volumes and user ratings differ across app versions?</li><li>Are newer app versions showing improved stability compared to previous releases?</li></ul>|
+| [google_play__country_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__country_report) | Analyzes daily app installs, ratings, and store visibility by country to understand geographic market performance and optimize regional app store strategies. <br></br>**Example Analytics Questions:**<ul><li>Which countries drive the most app installs and have the highest user ratings?</li><li>How do store performance metrics (visitors, conversions) vary across different markets?</li><li>What countries show the strongest growth potential based on install trends?</li></ul>|
+| [google_play__device_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__device_report) | Monitors daily installs and user ratings by device model to identify popular devices among users and optimize for device-specific compatibility. <br></br>**Example Analytics Questions:**<ul><li>Which device models have the most app installs and highest user satisfaction ratings?</li><li>Are there device-specific rating patterns that indicate compatibility issues?</li><li>Do frequent device updates correlate to increased satisfaction?</li></ul>|
+| [google_play__os_version_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__os_version_report) | Analyzes daily installs, crashes, and ratings by Android OS version to prioritize OS support, identify version-specific stability issues, and understand OS adoption among users. <br></br>**Example Analytics Questions:**<ul><li>Which Android OS versions have the most users and highest crash rates?</li><li>How do user ratings and app stability vary across different OS versions?</li><li>What percentage of users are on OS versions that require minimum support?</li></ul>|
+| [google_play__overview_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__overview_report) | Provides a comprehensive daily overview of app performance including installs, crashes, store metrics, and ratings to monitor overall app health and user satisfaction. <br></br>**Example Analytics Questions:**<ul><li>What are the daily trends in app installs, uninstalls, crashes, and user ratings?</li><li>How do overall app stability metrics (crash-free rate) trend over time?</li><li>What is the relationship between store visibility metrics and daily install volumes?</li></ul>|
+| [google_play__finance_report](https://fivetran.github.io/dbt_google_play/#!/model/model.google_play.google_play__finance_report) | Tracks daily subscription revenue, in-app purchases, and financial performance by product and country to analyze monetization effectiveness and revenue trends. <br></br>**Example Analytics Questions:**<ul><li>Which products and countries generate the most subscription and purchase revenue?</li><li>What is the mix of subscription versus one-time purchase revenue by market?</li><li>How do refund rates and net revenue vary across different products and regions?</li></ul>|
+
+¹ Each Quickstart transformation job run materializes these models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
+
+---
+
+## Prerequisites
 To use this dbt package, you must have the following:
 
 - At least one Fivetran Google Play connection syncing data into your destination.
 - A **BigQuery**, **Snowflake**, **Redshift**, **PostgreSQL**, or **Databricks** destination.
 
-### Step 2: Install the package (skip if also using the `app_reporting` transformation package)
+## How do I use the dbt package?
+You can either add this dbt package in the Fivetran dashboard or import it into your dbt project:
+
+- To add the package in the Fivetran dashboard, follow our [Quickstart guide](https://fivetran.com/docs/transformations/data-models/quickstart-management#quickstartmanagement).
+- To add the package to your dbt project, follow the setup instructions in the dbt package's [README file](https://github.com/fivetran/dbt_google_play/blob/main/README.md#how-do-i-use-the-dbt-package) to use this package.
+
+<!--section-end-->
+
+### Install the package (skip if also using the `app_reporting` transformation package)
 Include the following Google Play package version in your `packages.yml` file:
 > TIP: Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 ```yaml
 packages:
   - package: fivetran/google_play
-    version: [">=1.1.0", "<1.2.0"] # we recommend using ranges to capture non-breaking changes automatically
+    version: [">=1.2.0", "<1.3.0"] # we recommend using ranges to capture non-breaking changes automatically
 ```
 
 > All required sources and staging models are now bundled into this transformation package. Do not include `fivetran/google_play_source` in your `packages.yml` since this package has been deprecated.
 
-### Step 3: Define database and schema variables
+### Define database and schema variables
 By default, this package runs using your destination and the `google_play` schema. If this is not where your Google Play data is (for example, if your Google Play schema is named `google_play_fivetran`), add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
@@ -67,7 +91,7 @@ vars:
     google_play_schema: your_schema_name 
 ```
 
-### Step 4: Disable or enable source tables
+### Disable or enable source tables
 Your Google Play connection might not sync every table that this package expects. If you have financial and/or subscriptions data, namely the `earnings` and `financial_stats_subscriptions_country` tables, add the following variable(s) to your `dbt_project.yml` file:
 
 ```yml
@@ -76,13 +100,13 @@ vars:
     google_play__using_subscriptions: true # by default this is assumed to be FALSE
 ```
 
-### Step 5: Seed `country_codes` mapping table (once)
+### Seed `country_codes` mapping table (once)
 
 In order to map longform territory names to their ISO country codes, we have adapted the CSV from [lukes/ISO-3166-Countries-with-Regional-Codes](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes) to align Google and [Apple's](https://developer.apple.com/help/app-store-connect/reference/app-store-localizations/) country name formats for the [App Reporting](https://github.com/fivetran/dbt_app_reporting) combo package.
 
 You will need to `dbt seed` the `google_play__country_codes` [file](https://github.com/fivetran/dbt_google_play/blob/main/seeds/google_play__country_codes.csv) just once.
 
-### (Optional) Step 6: Additional configurations
+### (Optional) Additional configurations
 <details open><summary>Expand/collapse configurations</summary>
 
 #### Union multiple connections
@@ -121,11 +145,11 @@ vars:
 
 <br>
 
-### (Optional) Step 7: Orchestrate your models with Fivetran Transformations for dbt Core™
+### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>
     
-Fivetran offers the ability for you to orchestrate your dbt project through [Fivetran Transformations for dbt Core™](https://fivetran.com/docs/transformations/dbt). Learn how to set up your project for orchestration through Fivetran in our [Transformations for dbt Core™ setup guides](https://fivetran.com/docs/transformations/dbt#setupguide).
+Fivetran offers the ability for you to orchestrate your dbt project through [Fivetran Transformations for dbt Core™](https://fivetran.com/docs/transformations/dbt#transformationsfordbtcore). Learn how to set up your project for orchestration through Fivetran in our [Transformations for dbt Core™ setup guides](https://fivetran.com/docs/transformations/dbt/setup-guide#transformationsfordbtcoresetupguide).
 </details>
 <br>
     
@@ -144,17 +168,19 @@ packages:
     - package: dbt-labs/spark_utils
       version: [">=0.3.0", "<0.4.0"]
 ```
-## How is this package maintained and can I contribute?
-### Package Maintenance
-The Fivetran team maintaining this package _only_ maintains the latest version of the package. We highly recommend you stay consistent with the [latest version](https://hub.getdbt.com/fivetran/google_play/latest/) of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_google_play/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
 
-### Opinionated Decisions
-In creating this package, which is meant for a wide range of use cases, we had to take opinionated stances on a few different questions we came across during development. We've consolidated significant choices we made in the [DECISIONLOG.md](https://github.com/fivetran/dbt_google_play/blob/main/DECISIONLOG.md), and will continue to update as the package evolves. We are always open to and encourage feedback on these choices, and the package in general.
+<!--section="google-play_maintenance"-->
+## How is this package maintained and can I contribute?
+
+### Package Maintenance
+The Fivetran team maintaining this package only maintains the [latest version](https://hub.getdbt.com/fivetran/google_play/latest/) of the package. We highly recommend you stay consistent with the latest version of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_google_play/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
 
 ### Contributions
 A small team of analytics engineers at Fivetran develops these dbt packages. However, the packages are made better by community contributions.
 
-We highly encourage and welcome contributions to this package. Check out [this dbt Discourse article](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) on the best workflow for contributing to a package.
+We highly encourage and welcome contributions to this package. Learn how to contribute to a package in dbt's [Contributing to an external dbt package article](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657).
+
+<!--section-end-->
 
 ## Are there any resources available?
 - If you have questions or want to reach out for help, see the [GitHub Issue](https://github.com/fivetran/dbt_google_play/issues/new/choose) section to find the right avenue of support for you.
