@@ -1,21 +1,6 @@
 <!--section="google-play_transformation_model"-->
 # Google Play dbt Package
 
-<p align="left">
-    <a alt="License"
-        href="https://github.com/fivetran/dbt_google_play/blob/main/LICENSE">
-        <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a>
-    <a alt="dbt-core">
-        <img src="https://img.shields.io/badge/dbt_Core™_version->=1.3.0,_<3.0.0-orange.svg" /></a>
-    <a alt="Maintained?">
-        <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" /></a>
-    <a alt="PRs">
-        <img src="https://img.shields.io/badge/Contributions-welcome-blueviolet" /></a>
-    <a alt="Fivetran Quickstart Compatible"
-        href="https://fivetran.com/docs/transformations/data-models/quickstart-management#quickstartmanagement">
-        <img src="https://img.shields.io/badge/Fivetran_Quickstart_Compatible%3F-yes-green.svg" /></a>
-</p>
-
 This dbt package transforms data from Fivetran's Google Play connector into analytics-ready tables.
 
 ## Resources
@@ -29,6 +14,8 @@ This dbt package transforms data from Fivetran's Google Play connector into anal
   - [dbt Docs](https://fivetran.github.io/dbt_google_play/#!/overview)
   - [DAG](https://fivetran.github.io/dbt_google_play/#!/overview?g_v=1)
   - [Changelog](https://github.com/fivetran/dbt_google_play/blob/main/CHANGELOG.md)
+- dbt Core™ supported versions
+  - `>=1.3.0, <3.0.0`
 
 ## What does this dbt package do?
 This package enables you to better understand your Google Play app performance metrics at different granularities and aggregate all relevant application metrics. It creates enriched models with metrics focused on App Version, OS Version, Device Type, Country, Overview, and Product (Subscription + In-App Purchase) reporting levels.
