@@ -64,19 +64,46 @@ Include the following Google Play package version in your `packages.yml` file:
 ```yaml
 packages:
   - package: fivetran/google_play
-    version: [">=1.2.0", "<1.3.0"] # we recommend using ranges to capture non-breaking changes automatically
+    version: [">=1.3.0", "<1.4.0"] # we recommend using ranges to capture non-breaking changes automatically
 ```
 
 > All required sources and staging models are now bundled into this transformation package. Do not include `fivetran/google_play_source` in your `packages.yml` since this package has been deprecated.
 
 ### Define database and schema variables
+#### Option A: Single connection
 By default, this package runs using your destination and the `google_play` schema. If this is not where your Google Play data is (for example, if your Google Play schema is named `google_play_fivetran`), add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 vars:
     google_play_database: your_destination_name
-    google_play_schema: your_schema_name 
+    google_play_schema: your_schema_name
 ```
+
+#### Option B: Union multiple connections
+If you have multiple Google Play connections in Fivetran and would like to use this package on all of them simultaneously, we have provided functionality to do so. For each source table, the package will union all of the data together and pass the unioned table into the transformations. The `source_relation` column in each model indicates the origin of each record.
+
+To use this functionality, you will need to set the `google_play_sources` variable in your root `dbt_project.yml` file:
+
+```yml
+# dbt_project.yml
+
+vars:
+  google_play:
+    google_play_sources:
+      - database: connection_1_destination_name # Required
+        schema: connection_1_schema_name # Required
+        name: connection_1_source_name # Required only if following the step in the following subsection
+
+      - database: connection_2_destination_name
+        schema: connection_2_schema_name
+        name: connection_2_source_name
+```
+
+> Previous versions of this package employed two separate, mutually exclusive variables for unioning: `google_play_union_schemas` and `google_play_union_databases`. While these variables are still supported, `google_play_sources` is the recommended variable to configure.
+
+#### Optional: Incorporate unioned sources into DAG
+
+If you use [Fivetran Transformations for dbt Core™](https://fivetran.com/docs/transformations/dbt#transformationsfordbtcore) and are unioning multiple Google Play connections, you can define your sources in a property `.yml` file, [using this as a template](https://github.com/fivetran/dbt_google_play/blob/main/models/staging/src_google_play.yml). Set the variable `has_defined_sources: true` under the Google Play namespace in your `dbt_project.yml`. Otherwise, your Google Play connections won't appear in your DAG. See the `union_connections` macro [documentation](https://github.com/fivetran/dbt_fivetran_utils/tree/releases/v0.4.latest#optional-union-connections-defined-sources-configuration) for full configuration details.
 
 ### Disable or enable source tables
 Your Google Play connection might not sync every table that this package expects. If you have financial and/or subscriptions data, namely the `earnings` and `financial_stats_subscriptions_country` tables, add the following variable(s) to your `dbt_project.yml` file:
@@ -96,18 +123,6 @@ You will need to `dbt seed` the `google_play__country_codes` [file](https://gith
 ### (Optional) Additional configurations
 <details open><summary>Expand/collapse configurations</summary>
 
-#### Union multiple connections
-If you have multiple google_play connections in Fivetran and would like to use this package on all of them simultaneously, we have provided functionality to do so. The package will union all of the data together and pass the unioned table into the transformations. You will be able to see which source it came from in the `source_relation` column of each model. To use this functionality, you will need to set either the `google_play_union_schemas` OR `google_play_union_databases` variables (cannot do both) in your root `dbt_project.yml` file:
-
-```yml
-vars:
-    google_play_union_schemas: ['google_play_usa','google_play_canada'] # use this if the data is in different schemas/datasets of the same database/project
-    google_play_union_databases: ['google_play_usa','google_play_canada'] # use this if the data is in different databases/projects but uses the same schema name
-```
-> NOTE: The native `source.yml` connection set up in the package will not function when the union schema/database feature is utilized. Although the data will be correctly combined, you will not observe the sources linked to the package models in the Directed Acyclic Graph (DAG). This happens because the package includes only one defined `source.yml`.
-
-To connect your multiple schema/database sources to the package models, follow the steps outlined in the [Union Data Defined Sources Configuration](https://github.com/fivetran/dbt_fivetran_utils/tree/releases/v0.4.latest#union_data-source) section of the Fivetran Utils documentation for the union_data macro. This will ensure a proper configuration and correct visualization of connections in the DAG.
-    
 #### Change the build schema
 By default, this package builds the Google Play staging models within a schema titled (`<target_schema>` + `_google_play_source`) and your Google Play modeling models within a schema titled (`<target_schema>` + `_google_play`) in your destination. If this is not where you would like your Google Play data to be written to, add the following configuration to your root `dbt_project.yml` file:
 
@@ -127,6 +142,14 @@ If an individual source table has a different name than the package expects, add
 ```yml
 vars:
     google_play_<default_source_table_name>_identifier: your_table_name 
+```
+
+#### Source casing for case-sensitive destinations
+By default, the package applies case-insensitive comparisons when resolving `source_relation` values. If your destination is case-sensitive and you want downstream transformations to respect the exact casing of your source database and schema names, set the following variable:
+
+```yml
+vars:
+    fivetran_using_source_casing: true
 ```
 </details>
 

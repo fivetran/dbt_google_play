@@ -21,8 +21,8 @@ store_performance_metrics as (
     select
         *,
         round(store_listing_acquisitions * 1.0 / nullif(store_listing_visitors, 0), 4) as store_listing_conversion_rate,
-        sum(store_listing_acquisitions) over (partition by source_relation, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_acquisitions,
-        sum(store_listing_visitors) over (partition by source_relation, package_name order by date_day asc rows between unbounded preceding and current row) as total_store_visitors
+        sum(store_listing_acquisitions) over (partition by package_name {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows between unbounded preceding and current row) as total_store_acquisitions,
+        sum(store_listing_visitors) over (partition by package_name {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows between unbounded preceding and current row) as total_store_visitors
     from store_performance_rollup
 )
 
