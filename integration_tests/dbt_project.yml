@@ -40,8 +40,8 @@ dispatch:
 seeds:
   +docs:
     show: False
-  +quote_columns: "{{ target.type == 'redshift' or var('fivetran_using_source_casing', false) }}"
   google_play_integration_tests:
+    +quote_columns: "{{ target.type == 'redshift' or var('fivetran_using_source_casing', false) }}"
     stats_installs_overview:
       +column_types:
         active_device_installs: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
