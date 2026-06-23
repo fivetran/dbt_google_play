@@ -14,8 +14,8 @@ install_metrics as (
 
     select
         *,
-        sum(device_installs) over (partition by source_relation, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
-        sum(device_uninstalls) over (partition by source_relation, device, package_name order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
+        sum(device_installs) over (partition by device, package_name {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows between unbounded preceding and current row) as total_device_installs,
+        sum(device_uninstalls) over (partition by device, package_name {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows between unbounded preceding and current row) as total_device_uninstalls
     from installs 
 ), 
 
@@ -66,7 +66,7 @@ create_partitions as (
 
     {% for metric in rolling_metrics -%}
         , sum(case when {{ metric }} is null 
-                then 0 else 1 end) over (partition by source_relation, device, package_name order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
+                then 0 else 1 end) over (partition by device, package_name {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows unbounded preceding) as {{ metric | lower }}_partition
     {%- endfor %}
     from device_join
 ), 
@@ -93,7 +93,7 @@ fill_values as (
         {% for metric in rolling_metrics -%}
 
         , first_value( {{ metric }} ) over (
-            partition by source_relation, {{ metric | lower }}_partition, device, package_name order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
+            partition by {{ metric | lower }}_partition, device, package_name {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows between unbounded preceding and current row) as {{ metric }}
 
         {%- endfor %}
     from create_partitions

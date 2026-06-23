@@ -23,7 +23,7 @@ order_product_records as (
 
     select 
         *,
-        row_number() over(partition by source_relation, sku_id order by last_transaction_at desc) as n
+        row_number() over(partition by sku_id {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by last_transaction_at desc) as n
     from transaction_recency
 ), 
 

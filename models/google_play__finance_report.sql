@@ -69,7 +69,7 @@ create_partitions as (
     select 
         *,
         sum(case when total_active_subscriptions is null 
-                then 0 else 1 end) over (partition by source_relation, country_short, sku_id order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
+                then 0 else 1 end) over (partition by country_short, sku_id {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows unbounded preceding) as total_active_subscriptions_partition
     from daily_join
 ), 
 
@@ -94,7 +94,7 @@ fill_values as (
 
         -- now we'll take the non-null value for each partitioned batch and propagate it across the rows included in the batch
         first_value( total_active_subscriptions ) over (
-            partition by source_relation, total_active_subscriptions_partition, country_short, sku_id order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
+            partition by total_active_subscriptions_partition, country_short, sku_id {{ fivetran_utils.partition_by_source_relation(package_name='google_play') }} order by date_day asc rows between unbounded preceding and current row) as total_active_subscriptions
     from create_partitions
 ), 
 

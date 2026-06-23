@@ -7,6 +7,7 @@ sources:
     loader: Fivetran
 
     config:
+      enabled: "{{ var('google_play_sources', []) == [] }}"
       loaded_at_field: _fivetran_synced
       freshness:
         warn_after: {count: 48, period: hour}
@@ -336,7 +337,7 @@ sources:
           - name: _modified
             description: '{{ doc("_modified") }}'
           - name: country_region
-            description: Two-letter abbreviation of the country or region where the user’s Google account is registered.
+            description: Two-letter abbreviation of the country or region where the user's Google account is registered.
           - name: date
             description: '{{ doc("date") }}'
           - name: package_name
@@ -477,7 +478,7 @@ sources:
           Each line in the report represents a type of transaction, like when you charge a customer money or pay Google a fee, along with the original and converted amounts.
           Does not include chargebacks. No transactions made in the European Economic Area will not be Google fees. 
         config:
-          enabled: "{{ var('google_play__using_earnings', false) }}"
+          enabled: "{{ var('google_play__using_earnings', false) and var('google_play_sources', []) == [] }}"
         columns:
           - name: _file
             description: '{{ doc("_file") }}'
@@ -518,7 +519,7 @@ sources:
           - name: product_type
             description: Used to identify the type of product sold. '0' represents the sale of a paid app, '1' represents the sale of an in-app product or subscription.
           - name: refund_type
-            description: Refunds where the buyer was reimbursed their full spend will be marked as 'Full'. Refunds for part of a user’s payment amount will be marked as 'Partial'. 
+            description: Refunds where the buyer was reimbursed their full spend will be marked as 'Full'. Refunds for part of a user's payment amount will be marked as 'Partial'. 
           - name: sku_id
             description: '{{ doc("sku_id") }}'
           - name: tax_type
@@ -534,7 +535,7 @@ sources:
         identifier: "{{ var('google_play_financial_stats_subscriptions_country_identifier', 'financial_stats_subscriptions_country') }}"
         description: Each line is a daily snapshot of the monthly subscriptions report by individual country, app, and subscription product.
         config:
-          enabled: "{{ var('google_play__using_subscriptions', false) }}"
+          enabled: "{{ var('google_play__using_subscriptions', false) and var('google_play_sources', []) == [] }}"
         columns:
           - name: _file
             description: '{{ doc("_file") }}'
