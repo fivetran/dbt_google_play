@@ -57,7 +57,11 @@ final as (
 
         {% elif target.type in ('spark','databricks') %}
         to_date(transaction_date, 'MMM d, y') as transaction_date,
-        to_timestamp(to_date(transaction_date, 'MMM d, y') || ' ' || left(lpad(transaction_time, 15, '0'), 11), 'yyyy-MM-dd h:m:s a') 
+        to_timestamp(to_date(transaction_date, 'MMM d, y') || ' ' || left(lpad(transaction_time, 15, '0'), 11), 'yyyy-MM-dd h:m:s a')
+
+        {% elif target.type == 'duckdb' %}
+        strptime(transaction_date, '%b %-d, %Y')::date as transaction_date,
+        strptime(strptime(transaction_date, '%b %-d, %Y')::date::varchar || ' ' || left(lpad(transaction_time, 15, '0'), 11), '%Y-%m-%d %I:%M:%S %p')::timestamp
 
         {% else %}
         cast(transaction_date as date) as transaction_date,
