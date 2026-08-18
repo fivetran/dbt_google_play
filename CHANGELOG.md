@@ -1,3 +1,11 @@
+# dbt_google_play v1.3.1
+
+[PR #36](https://github.com/fivetran/dbt_google_play/pull/36) includes the following updates:
+
+## Feature Updates
+- Adds DuckDB as a supported destination.
+
+
 # dbt_google_play v1.3.0
 
 [PR #34](https://github.com/fivetran/dbt_google_play/pull/34) includes the following updates:
