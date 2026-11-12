@@ -10,3 +10,4 @@ under_the_hood:
 - Removes the `android_os_version` field from the documentation for the `google_play__overview_report`
   model. This model does not return the field, so dbt raised a warning for it on every
   run.
+date: '2026-11-12'
