@@ -271,8 +271,6 @@ models:
         description: "{{ doc('source_relation') }}"
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
-      - name: android_os_version
-        description: '{{ doc("android_os_version") }}'
       - name: device_installs
         description: '{{ doc("daily_device_installs") }}'
       - name: device_uninstalls

@@ -263,6 +263,8 @@ models:
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
+      - name: _fivetran_synced
+        description: '{{ doc("_fivetran_synced") }}'
       - name: traffic_source_unique_key
         description: Surrogate key hashed on `source_relation`, `date_day`, `package_name`, `traffic_source`, `search_term`, `utm_campaign`, and `utm_source`.
         tests:
@@ -301,6 +303,8 @@ models:
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
+      - name: _fivetran_synced
+        description: '{{ doc("_fivetran_synced") }}'
       - name: active_devices_last_30_days
         description: '{{ doc("active_device_installs") }}'
       - name: device_installs
@@ -329,6 +333,8 @@ models:
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
+      - name: _fivetran_synced
+        description: '{{ doc("_fivetran_synced") }}'
       - name: anrs
         description: '{{ doc("daily_anrs") }}'
       - name: crashes
@@ -343,6 +349,8 @@ models:
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
+      - name: _fivetran_synced
+        description: '{{ doc("_fivetran_synced") }}'
       - name: average_rating
         description: '{{ doc("daily_average_rating") }}'
       - name: date_day
@@ -359,6 +367,8 @@ models:
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
+      - name: _fivetran_synced
+        description: '{{ doc("_fivetran_synced") }}'
       - name: amount_buyer_currency
         description: Total amount for this invoice line before currency conversion.
       - name: amount_merchant_currency
