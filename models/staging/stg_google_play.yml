@@ -6,6 +6,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly installs report by app and app version.
       Records with `NULL` app version codes are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - app_version_code
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -38,6 +46,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly crashes report by app version and app.
       Records with `NULL` app version codes are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - app_version_code
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -56,6 +72,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly ratings report by app and app version.
       Records with `NULL` app version codes are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - app_version_code
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -74,6 +98,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly installs report by app and type of device model.
       Records with `NULL` device types are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - device
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -106,6 +138,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly ratings report by app and type of device model.
       Records with `NULL` device types are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - device
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -124,6 +164,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly installs report by app and user OS version.
       Records with `NULL` os versions are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - android_os_version
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -156,6 +204,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly ratings report by app and user OS version.
       Records with `NULL` os versions are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - android_os_version
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -174,6 +230,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly crashes report by app and user OS version.
       Records with `NULL` os versions are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - android_os_version
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -192,6 +256,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly installs report by app and user country.
       Records with `NULL` countries are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - country
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -224,6 +296,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly ratings report by app and country.
       Records with `NULL` countries are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - country
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -242,6 +322,14 @@ models:
     description: >
       Each line is a daily snapshot of the monthly store performance report by app and country.
       Records with `NULL` countries are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - country_region
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -298,6 +386,13 @@ models:
 
   - name: stg_google_play__stats_installs_overview
     description: Each line is a daily snapshot of the monthly overview installs report by app.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -326,6 +421,13 @@ models:
 
   - name: stg_google_play__stats_crashes_overview
     description: Each line is a daily snapshot of the monthly overview crashes report by app.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -340,6 +442,13 @@ models:
 
   - name: stg_google_play__stats_ratings_overview
     description: Each line is a daily snapshot of the monthly overview ratings report by app.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -356,6 +465,14 @@ models:
     description: >
       Each line in the report represents a type of transaction, like when you charge a customer money or pay Google a fee, along with the original and converted amounts.
       Does not include chargebacks. No transactions made in the European Economic Area will not be Google fees. 
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - order_id
+              - transaction_type
+              - tax_type
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -410,6 +527,15 @@ models:
     description: >
       Each line is a daily snapshot of the monthly subscriptions report by individual country, app, and subscription product.
       Records with `NULL` countries are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - country
+              - product_id
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"

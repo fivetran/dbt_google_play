@@ -5,6 +5,14 @@ models:
     description: >
       Daily report on installs and ratings by app and device model type. 
       Records with `NULL` device types (ie did not consent to being tracked) are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - device
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -47,6 +55,14 @@ models:
     description: >
       Daily report on installs, ratings, and store performance by app and user country. 
       Records with `NULL` countries (ie did not consent to being tracked) are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - country_short
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -111,6 +127,15 @@ models:
       data, and therefore this model will NOT tie out with the UI revenue reports. Google recommends using
       `earnings` data for financial analyses despite this -- `sales` does not include chargebacks and the like, making 
       it more appropriate for trend analyses than accounting ([source](https://support.google.com/googleplay/android-developer/answer/6135870)).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - date_day
+              - package_name
+              - country_short
+              - sku_id
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -175,6 +200,14 @@ models:
     description: >
       Daily report on installs, crashes and ANRs, and ratings by app and app_version. 
       Records with `NULL` app version codes are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - app_version_code
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -221,6 +254,14 @@ models:
     description: >
       Daily report on installs, crashes and ANRs, and ratings by app and android os version. 
       Records with `NULL` os versions (ie they do not consent to being tracked) are aggregated together into daily batches.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
+              - android_os_version
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
@@ -266,6 +307,13 @@ models:
   - name: google_play__overview_report
     description: >
       Daily overview report on installs, crashes and ANRs, ratings, and store performance by app. 
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - source_relation
+              - package_name
+              - date_day
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
