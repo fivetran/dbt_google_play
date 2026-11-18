@@ -1,3 +1,15 @@
+# dbt_google_play v1.4.0
+
+[PR #40](https://github.com/fivetran/dbt_google_play/pull/40) includes the following updates:
+
+## Feature Update
+- Raises the minimum dbt version to 1.10.0.
+- Adds `dbt_utils.unique_combination_of_columns` tests to staging and end models. If a test fails, please [open an issue](https://github.com/fivetran/dbt_google_play/issues/new/choose).
+
+## Under the Hood
+- Adds the `_fivetran_synced` field to the documentation for the `stg_google_play__earnings`, `stg_google_play__stats_crashes_overview`, `stg_google_play__stats_installs_overview`, `stg_google_play__stats_ratings_overview`, and `stg_google_play__store_performance_source` models. Each model already returns this field; only the documentation was missing it.
+- Removes the `android_os_version` field from the documentation for the `google_play__overview_report` model. This model does not return the field, so dbt raised a warning for it on every run.
+
 # dbt_google_play v1.3.1
 
 [PR #36](https://github.com/fivetran/dbt_google_play/pull/36) includes the following updates:
