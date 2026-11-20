@@ -355,7 +355,7 @@ models:
         description: '{{ doc("_fivetran_synced") }}'
       - name: traffic_source_unique_key
         description: Surrogate key hashed on `source_relation`, `date_day`, `package_name`, `traffic_source`, `search_term`, `utm_campaign`, and `utm_source`.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: date_day
