@@ -481,6 +481,7 @@ models:
               - order_id
               - transaction_type
               - tax_type
+              - amount_buyer_currency
     columns:
       - name: source_relation
         description: "{{ doc('source_relation') }}"
