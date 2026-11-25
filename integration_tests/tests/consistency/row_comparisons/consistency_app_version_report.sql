@@ -3,16 +3,14 @@
     enabled=var('fivetran_validation_tests_enabled', false)
 ) }}
 
-{% set exclude_cols = ['inferred_app_name'] %}
-
 -- this test ensures the daily_activity end model matches the prior version
 with prod as (
-    select {{ dbt_utils.star(from=ref('google_play__app_version_report'), except=exclude_cols) }}
+    select *
     from {{ target.schema }}_google_play_prod.google_play__app_version_report
 ),
 
 dev as (
-    select {{ dbt_utils.star(from=ref('google_play__app_version_report'), except=exclude_cols) }}
+    select *
     from {{ target.schema }}_google_play_dev.google_play__app_version_report
 ),
 
