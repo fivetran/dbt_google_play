@@ -13,7 +13,4 @@ schema_data_changes:
     old: null
     new: inferred_app_name
     is_breaking: false
-    notes: Adds `inferred_app_name`, which is the text after the final period in `package_name`.
-      For example, `com.mwaysolutions.messeDd.Caravan` becomes `Caravan`. Use it to
-      match Google Play apps with apps from other stores. `package_name` is unchanged.
-date: '2026-11-25'
+    notes: Adds `inferred_app_name`, which is the text after the final period in `package_name`. Use it to match Google Play apps with apps from other stores. `package_name` is unchanged.
