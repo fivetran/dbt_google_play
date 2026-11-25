@@ -30,11 +30,12 @@ final as (
         cast(country as {{ dbt.type_string() }}) as country,
         cast(product_id as {{ dbt.type_string() }}) as product_id,
         cast(package_name as {{ dbt.type_string() }}) as package_name,
+        {{ infer_app_name('package_name') }} as inferred_app_name,
         sum(cast(active_subscriptions as {{ dbt.type_bigint() }})) as total_active_subscriptions,
         sum(cast(cancelled_subscriptions as {{ dbt.type_bigint() }})) as cancelled_subscriptions,
         sum(cast(new_subscriptions as {{ dbt.type_bigint() }})) as new_subscriptions
     from fields
-    {{ dbt_utils.group_by(5) }}
+    {{ dbt_utils.group_by(6) }}
 )
 
 select *

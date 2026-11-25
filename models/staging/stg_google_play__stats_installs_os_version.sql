@@ -26,6 +26,7 @@ final as (
         cast(source_relation as {{ dbt.type_string() }}) as source_relation,
         cast(date as date) as date_day,
         cast(package_name as {{ dbt.type_string() }}) as package_name,
+        {{ infer_app_name('package_name') }} as inferred_app_name,
         cast(android_os_version as {{ dbt.type_string() }}) as android_os_version,
         sum(cast(active_device_installs as {{ dbt.type_bigint() }})) as active_devices_last_30_days,
         sum(cast(daily_device_installs as {{ dbt.type_bigint() }})) as device_installs,
@@ -37,7 +38,7 @@ final as (
         sum(cast(uninstall_events as {{ dbt.type_bigint() }})) as uninstall_events,
         sum(cast(update_events as {{ dbt.type_bigint() }})) as update_events
     from fields
-    {{ dbt_utils.group_by(4) }}
+    {{ dbt_utils.group_by(5) }}
 )
 
 select *

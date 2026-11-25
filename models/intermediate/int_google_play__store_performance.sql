@@ -10,10 +10,11 @@ store_performance_rollup as (
         source_relation,
         date_day,
         package_name,
+        inferred_app_name,
         sum(store_listing_acquisitions) as store_listing_acquisitions,
         sum(store_listing_visitors) as store_listing_visitors
     from store_performance
-    {{ dbt_utils.group_by(3) }}
+    {{ dbt_utils.group_by(4) }}
 ),
 
 store_performance_metrics as (

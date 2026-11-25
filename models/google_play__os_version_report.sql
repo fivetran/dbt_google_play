@@ -33,6 +33,7 @@ app_version_join as (
         coalesce(install_metrics.date_day, ratings.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.android_os_version, ratings.android_os_version, crashes.android_os_version) as android_os_version,
         coalesce(install_metrics.package_name, ratings.package_name, crashes.package_name) as package_name,
+        coalesce(install_metrics.inferred_app_name, ratings.inferred_app_name, crashes.inferred_app_name) as inferred_app_name,
 
         -- metrics based on unique devices + users
         coalesce(install_metrics.active_devices_last_30_days, 0) as active_devices_last_30_days,
@@ -93,6 +94,7 @@ fill_values as (
         date_day,
         android_os_version,
         package_name,
+        inferred_app_name,
         device_installs,
         device_uninstalls,
         device_upgrades,
@@ -122,6 +124,7 @@ final as (
         date_day,
         android_os_version,
         package_name,
+        inferred_app_name,
         device_installs,
         device_uninstalls,
         device_upgrades,

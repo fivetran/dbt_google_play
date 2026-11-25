@@ -17,6 +17,7 @@ daily_country_metrics as (
         buyer_country as country_short, -- rolling up past states/territories
         sku_id, -- this will be a subscription or in-app product
         package_name,
+        inferred_app_name,
         merchant_currency,
         sum(amount_merchant_currency) as net_amount,
         count(distinct order_id) as transactions
@@ -25,7 +26,7 @@ daily_country_metrics as (
         , count( distinct case when lower(transaction_type) = '{{ t | lower }}' then order_id end ) as {{ t | replace(' ', '_') | lower }}_transactions
         {% endfor %}
     from earnings
-    {{ dbt_utils.group_by(6) }}
+    {{ dbt_utils.group_by(7) }}
 )
 
 select *

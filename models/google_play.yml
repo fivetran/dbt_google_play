@@ -36,6 +36,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -92,6 +94,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -151,6 +155,8 @@ models:
         description: Geographical subregion of the country.
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: sku_id
         description: '{{ doc("sku_id") }}' 
       - name: merchant_currency
@@ -231,6 +237,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -285,6 +293,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -335,6 +345,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events

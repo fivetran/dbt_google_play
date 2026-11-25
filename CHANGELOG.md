@@ -1,3 +1,12 @@
+# dbt_google_play v1.5.0
+
+## Schema/Data Change
+**1 total change • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| google_play__app_version_report<br>google_play__country_report<br>google_play__device_report<br>google_play__finance_report<br>google_play__os_version_report<br>google_play__overview_report<br>stg_google_play__store_performance_source | New column |  | inferred_app_name | Adds `inferred_app_name`, which is the text after the final period in `package_name`. For example, `com.mwaysolutions.messeDd.Caravan` becomes `Caravan`. Use it to match Google Play apps with apps from other stores. `package_name` is unchanged. |
+
 # dbt_google_play v1.4.0
 
 [PR #40](https://github.com/fivetran/dbt_google_play/pull/40) includes the following updates:

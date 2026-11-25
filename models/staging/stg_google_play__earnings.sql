@@ -39,6 +39,7 @@ final as (
         merchant_currency,
         offer_id,
         product_id as package_name,
+        {{ infer_app_name('product_id') }} as inferred_app_name,
         product_title,
         product_type,
         refund_type,
