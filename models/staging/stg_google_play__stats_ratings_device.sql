@@ -27,10 +27,11 @@ final as (
         cast(date as date) as date_day,
         cast(device as {{ dbt.type_string() }}) as device,
         cast(package_name as {{ dbt.type_string() }}) as package_name,
+        {{ infer_app_name('package_name') }} as inferred_app_name,
         case when device is null then null else cast( nullif(cast(daily_average_rating as {{ dbt.type_string() }}), 'NA') as {{ dbt.type_float() }} ) end as average_rating,
         case when device is null then null else total_average_rating end as rolling_total_average_rating
     from fields
-    {{ dbt_utils.group_by(6) }}
+    {{ dbt_utils.group_by(7) }}
 )
 
 select *

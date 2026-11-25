@@ -38,11 +38,12 @@ daily_join as (
         coalesce(earnings.date_day, subscriptions.date_day) as date_day,
         coalesce(earnings.country_short, subscriptions.country) as country_short,
         coalesce(earnings.package_name, subscriptions.package_name) as package_name,
+        coalesce(earnings.inferred_app_name, subscriptions.inferred_app_name) as inferred_app_name,
         coalesce(earnings.sku_id, subscriptions.product_id) as sku_id,
         earnings.merchant_currency, -- this will just be null if there aren't transactions on a given day
 
         {% for t in earning_transaction_metrics -%}
-            {% if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {% if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'inferred_app_name', 'merchant_currency'] -%}
         coalesce( {{ t.column }}, 0) as {{ t.column|lower }},
             {% endif %}
         {%- endfor -%}
@@ -81,10 +82,11 @@ fill_values as (
         date_day,
         country_short,
         package_name, 
+        inferred_app_name,
         sku_id,
         merchant_currency,
         {% for t in earning_transaction_metrics -%}
-            {%- if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {%- if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'inferred_app_name', 'merchant_currency'] -%}
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
@@ -105,10 +107,11 @@ final_values as (
         date_day,
         country_short,
         package_name, 
+        inferred_app_name,
         sku_id,
         merchant_currency,
         {% for t in earning_transaction_metrics -%}
-            {%- if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'merchant_currency'] -%}
+            {%- if t.column|lower not in ['source_relation', 'country_short', 'date_day', 'sku_id', 'package_name', 'inferred_app_name', 'merchant_currency'] -%}
         {{ t.column | lower }},
             {% endif %}
         {%- endfor -%}
@@ -126,7 +129,6 @@ add_product_country_info as (
 
     select 
         base.*,
-        {{ dbt.split_part(string_text='base.package_name', delimiter_text="'.'", part_number=-1) }} as inferred_app_name,
         product_info.product_title,
         coalesce(country_codes.alternative_country_name, country_codes.country_name) as country_long,
         country_codes.region,

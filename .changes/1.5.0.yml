@@ -8,9 +8,33 @@ schema_data_changes:
     - google_play__finance_report
     - google_play__os_version_report
     - google_play__overview_report
-    - stg_google_play__store_performance_source
     change_type: New column
     old: null
     new: inferred_app_name
     is_breaking: false
-    notes: Adds `inferred_app_name`, which is the text after the final period in `package_name`. Use it to match Google Play apps with apps from other stores. `package_name` is unchanged.
+    notes: Adds `inferred_app_name`, which is the text after the final period in `package_name`. For example, `com.mwaysolutions.messeDd.Caravan` becomes `Caravan`. Use it to match Google Play apps with apps from other stores. `package_name` is unchanged.
+  - models:
+    - stg_google_play__earnings
+    - stg_google_play__stats_crashes_app_version
+    - stg_google_play__stats_crashes_os_version
+    - stg_google_play__stats_crashes_overview
+    - stg_google_play__stats_installs_app_version
+    - stg_google_play__stats_installs_country
+    - stg_google_play__stats_installs_device
+    - stg_google_play__stats_installs_os_version
+    - stg_google_play__stats_installs_overview
+    - stg_google_play__stats_ratings_app_version
+    - stg_google_play__stats_ratings_country
+    - stg_google_play__stats_ratings_device
+    - stg_google_play__stats_ratings_os_version
+    - stg_google_play__stats_ratings_overview
+    - stg_google_play__store_performance_country
+    - stg_google_play__store_performance_source
+    - stg_google_play__subscriptions_country
+    change_type: New column
+    old: null
+    new: inferred_app_name
+    is_breaking: false
+    notes: Adds `inferred_app_name`, derived from `package_name`. The end models take it from these staging models.
+under_the_hood:
+- description: Adds the `infer_app_name` macro, which parses the app name from a package name. The staging models use it to create `inferred_app_name`.

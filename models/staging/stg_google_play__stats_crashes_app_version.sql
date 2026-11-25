@@ -27,10 +27,11 @@ final as (
         cast(date as date) as date_day,
         cast(app_version_code as {{ dbt.type_int() }}) as app_version_code,
         cast(package_name as {{ dbt.type_string() }}) as package_name,
+        {{ infer_app_name('package_name') }} as inferred_app_name,
         sum(cast(daily_anrs as {{ dbt.type_bigint() }})) as anrs,
         sum(cast(daily_crashes as {{ dbt.type_bigint() }})) as crashes
     from fields
-    {{ dbt_utils.group_by(4) }}
+    {{ dbt_utils.group_by(5) }}
 )
 
 select *

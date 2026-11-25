@@ -26,7 +26,7 @@ final as (
         cast(source_relation as {{ dbt.type_string() }}) as source_relation,
         cast(date as date) as date_day,
         cast(package_name as {{ dbt.type_string() }}) as package_name,
-        {{ dbt.split_part(string_text='package_name', delimiter_text="'.'", part_number=-1) }} as inferred_app_name,
+        {{ infer_app_name('package_name') }} as inferred_app_name,
         traffic_source,
         search_term,
         utm_campaign,

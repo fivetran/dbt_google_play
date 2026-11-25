@@ -37,6 +37,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -67,6 +69,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
 
   - name: stg_google_play__stats_ratings_app_version
     description: >
@@ -91,6 +95,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: rolling_total_average_rating
         description: '{{ doc("total_average_rating") }}'
 
@@ -129,6 +135,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -157,6 +165,8 @@ models:
         description: '{{ doc("device") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: rolling_total_average_rating
         description: '{{ doc("total_average_rating") }}'
 
@@ -195,6 +205,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -223,6 +235,8 @@ models:
         description: '{{ doc("device") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: rolling_total_average_rating
         description: '{{ doc("total_average_rating") }}'
 
@@ -251,6 +265,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
 
   - name: stg_google_play__stats_installs_country
     description: >
@@ -287,6 +303,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -315,6 +333,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: rolling_total_average_rating
         description: '{{ doc("total_average_rating") }}'
 
@@ -339,6 +359,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: store_listing_acquisitions
         description: '{{ doc("store_listing_acquisitions") }}'
       - name: store_listing_conversion_rate
@@ -420,6 +442,8 @@ models:
         description: '{{ doc("install_events") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: uninstall_events
         description: '{{ doc("uninstall_events") }}'
       - name: update_events
@@ -447,6 +471,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
 
   - name: stg_google_play__stats_ratings_overview
     description: Each line is a daily snapshot of the monthly overview ratings report by app.
@@ -468,6 +494,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: rolling_total_average_rating
         description: '{{ doc("total_average_rating") }}'
 
@@ -515,6 +543,8 @@ models:
         description: ID of the offer used to purchase the product.
       - name: package_name
         description: Package name of the app where the product was sold. Renamed from `product_id`.
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: product_title
         description: Developer-specified name of the product. Shown in the buyer's locale.
       - name: product_type
@@ -564,6 +594,8 @@ models:
         description: '{{ doc("new_subscriptions") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: product_id
         description: '{{ doc("sku_id") }}'
 

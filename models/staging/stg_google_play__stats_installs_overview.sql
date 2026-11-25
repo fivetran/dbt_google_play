@@ -26,6 +26,7 @@ final as (
         cast(source_relation as {{ dbt.type_string() }}) as source_relation,
         cast(date as date) as date_day,
         cast(package_name as {{ dbt.type_string() }}) as package_name,
+        {{ infer_app_name('package_name') }} as inferred_app_name,
         cast(active_device_installs as {{ dbt.type_bigint() }}) as active_devices_last_30_days,
         cast(daily_device_installs as {{ dbt.type_bigint() }}) as device_installs,
         cast(daily_device_uninstalls as {{ dbt.type_bigint() }}) as device_uninstalls,

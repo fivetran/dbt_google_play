@@ -38,6 +38,7 @@ overview_join as (
         coalesce(install_metrics.source_relation, ratings.source_relation, store_performance.source_relation, crashes.source_relation) as source_relation,
         coalesce(install_metrics.date_day, ratings.date_day, store_performance.date_day, crashes.date_day) as date_day,
         coalesce(install_metrics.package_name, ratings.package_name, store_performance.package_name, crashes.package_name) as package_name,
+        coalesce(install_metrics.inferred_app_name, ratings.inferred_app_name, store_performance.inferred_app_name, crashes.inferred_app_name) as inferred_app_name,
 
         -- metrics based on unique devices + users
         coalesce(install_metrics.active_devices_last_30_days, 0) as active_devices_last_30_days,
@@ -102,6 +103,7 @@ fill_values as (
         source_relation,
         date_day,
         package_name,
+        inferred_app_name,
         active_devices_last_30_days,
         device_installs,
         device_uninstalls,
@@ -133,7 +135,7 @@ final as (
         source_relation,
         date_day,
         package_name,
-        {{ dbt.split_part(string_text='package_name', delimiter_text="'.'", part_number=-1) }} as inferred_app_name,
+        inferred_app_name,
         device_installs,
         device_uninstalls,
         device_upgrades,

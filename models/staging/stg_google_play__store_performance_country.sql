@@ -27,11 +27,12 @@ final as (
         cast(date as date) as date_day,
         cast(country_region as {{ dbt.type_string() }}) as country_region,
         cast(package_name as {{ dbt.type_string() }}) as package_name,
+        {{ infer_app_name('package_name') }} as inferred_app_name,
         sum(cast(store_listing_acquisitions as {{ dbt.type_bigint() }})) as store_listing_acquisitions,
         avg(store_listing_conversion_rate) as store_listing_conversion_rate,
         sum(cast(store_listing_visitors as {{ dbt.type_bigint() }})) as store_listing_visitors
     from fields
-    {{ dbt_utils.group_by(4) }}
+    {{ dbt_utils.group_by(5) }}
 )
 
 select *
