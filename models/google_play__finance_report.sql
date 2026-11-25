@@ -126,6 +126,7 @@ add_product_country_info as (
 
     select 
         base.*,
+        {{ dbt.split_part(string_text='base.package_name', delimiter_text="'.'", part_number=-1) }} as inferred_app_name,
         product_info.product_title,
         coalesce(country_codes.alternative_country_name, country_codes.country_name) as country_long,
         country_codes.region,

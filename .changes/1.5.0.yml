@@ -1,0 +1,16 @@
+version: 1.5.0
+schema_data_changes:
+  entries:
+  - models:
+    - google_play__app_version_report
+    - google_play__country_report
+    - google_play__device_report
+    - google_play__finance_report
+    - google_play__os_version_report
+    - google_play__overview_report
+    - stg_google_play__store_performance_source
+    change_type: New column
+    old: null
+    new: inferred_app_name
+    is_breaking: false
+    notes: Adds `inferred_app_name`, which is the text after the final period in `package_name`. For example, `com.mwaysolutions.messeDd.Caravan` becomes `Caravan`. Use it to match Google Play apps with apps from other stores. `package_name` is unchanged.

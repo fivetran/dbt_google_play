@@ -50,6 +50,10 @@ The date on which the data is reported.
 The package name of the app owning the report data.
 {% enddocs %}
 
+{% docs inferred_app_name %}
+The app name inferred from `package_name`, which is the text after the final period. For example, `com.mwaysolutions.messeDd.Caravan` becomes `Caravan`. Use this field to align Google Play apps with apps from other stores. Verify the value matches your app naming, as `package_name` doesn't always end with the app name.
+{% enddocs %}
+
 {% docs daily_anrs %}
 Daily application not responding (ANR) reports collected from Android devices whose users have opted in to automatically share usage and diagnostics data.
 {% enddocs %}

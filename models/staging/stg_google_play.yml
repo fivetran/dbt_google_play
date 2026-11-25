@@ -362,6 +362,8 @@ models:
         description: '{{ doc("date") }}'
       - name: package_name
         description: '{{ doc("package_name") }}'
+      - name: inferred_app_name
+        description: '{{ doc("inferred_app_name") }}'
       - name: search_term
         description: >
           The term the user searched for before navigating to your store listing. Only available when the traffic source is Google Play search.

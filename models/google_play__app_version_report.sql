@@ -121,6 +121,7 @@ final as (
         date_day,
         app_version_code,
         package_name,
+        {{ dbt.split_part(string_text='package_name', delimiter_text="'.'", part_number=-1) }} as inferred_app_name,
         device_installs,
         device_uninstalls,
         device_upgrades,
